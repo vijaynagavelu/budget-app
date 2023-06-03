@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -17,11 +12,49 @@
 }
 
 body {
+  font-family: 'Roboto';
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  width: 25px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  opacity: 1;
+}
+
+input[type=number] {
+  position: relative;
+  padding: 20px;
+}
+
+.piechart {
+  margin-bottom: 30px;
+  position: absolte;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  /* background-image: conic-gradient(pink 70deg,
+      lightblue 0 235deg,
+      orange 0); */
+}
+
+.whiteRound {
+  position: absolute;
+  margin-top: 20px;
+  margin-left: 0px;
+}
+
+.totalAmount {
+  color: black;
+  font-weight: 600;
+  position: absolute;
+  margin-top: 70px;
+  margin-left: 36px;
 }
