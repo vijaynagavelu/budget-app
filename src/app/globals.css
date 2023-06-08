@@ -52,9 +52,6 @@ input[type=number] {
 }
 
 .totalAmount {
-  color: black;
-  font-weight: 600;
   position: absolute;
   margin-top: 70px;
-  margin-left: 36px;
 }

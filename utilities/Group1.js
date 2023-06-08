@@ -1,4 +1,4 @@
-export function Group1({ color, title, amount, percentage }) {
+export function Group1({ color, title, amount, percentage, setPercentage }) {
     return (
         <div className="flex flex-row items-center justify-between mb-6 ">
             <div className="flex flex-row items-center gap-8 ">
@@ -14,7 +14,9 @@ export function Group1({ color, title, amount, percentage }) {
                     </div>
                 </div>
             </div>
-            <input readOnly className="w-20 h-10 text-m text-black font-semibold rounded" placeholder="0" type="number" name="quantity" min={0} step={10} max={100}></input>
+            <input onChange={(e) => {
+                setPercentage(e.target.value);
+            }} className="w-20 h-10 text-m text-black font-semibold rounded" placeholder="0" type="number" value={percentage} name="quantity" min={0} step={10} max={100}></input>
         </div >
     )
 } 
