@@ -12,6 +12,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>
+      <h1 className='text-white'>hai ever</h1>
+
+
+      <a href='/pages' className='text-white' >link</a>
+
+
     </html>
   )
 }

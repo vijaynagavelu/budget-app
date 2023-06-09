@@ -1,8 +1,17 @@
+'use client';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+
+import React from 'react'
+
+
 
 
 export default function Home() {
+
+  const router = useRouter();
+
   return (
     <main className="flex min-h-screen flex-col items-left p-6">
       <div className=" max-w-xl  text-2xl  mb-16">
@@ -10,12 +19,9 @@ export default function Home() {
       </div>
       <h1 className='text-5xl font-semibold mb-2'>Get started.</h1>
 
-
       <p className='text-sm mb-6' >Already have an account?
         <span className='text-indigo-400 '>&nbsp; Login</span>
       </p>
-
-
 
       <div className='flex flex-row  px-16 mb-4 justify-center items-center border gap-x-2 rounded-md'>
         <Image className="emoji" width={18}
@@ -48,9 +54,11 @@ export default function Home() {
       <p className='5 text-xs mb-1.5'> Confirm Password</p>
       <input className='text-black text-base p-3 font-normal mb-8 rounded-md'></input>
 
-      <Link href="/page2" className='flex '>
-        <button className='py-2 bg-indigo-600  w-full'> Register </button>
+      <button type='button' onClick={() => router.push('/pages')} className='py-2 bg-indigo-600 w-full'> Register </button>
+      <Link href="/pages">
+        link
       </Link>
+      <a href='/pages'>hi</a>
 
 
     </main >

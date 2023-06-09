@@ -24,8 +24,6 @@ export default function Home1() {
                 <input className='text-black  text-base p-3 font-medium w-full  ' value={"69,960.00"}></input>
             </div>
 
-
-
             <button className='py-2 bg-indigo-600 '> Next -&gt;  </button>
 
         </main >
