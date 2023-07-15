@@ -10,24 +10,45 @@ export async function GET() {
 }
 
 
-export async function POST(req) {
+export async function PUT(req){
     const data = await req.json();
-    console.log(data);
-    await createInquiry(data)
-    return NextResponse.json({ "hello": "salary POST api" })
+    try {
+        const updateUsers = await prisma.inquiry.update({
+            where: {
+              email: data.email,
+              },
+              data: {
+                essentials: data.essentials,
+                non_essentials: data.non_essentials,
+                savings: data.savings,
+            }
+          })
+        console.log(updateUsers);
+    } catch (error) {
+        console.error('Request error', error)
+    }   
+     return NextResponse.json({ "hello": "salary PUT api" })
 }
 
 
-async function createInquiry(data) {
+
+export async function POST(req) {
+    const data = await req.json();
     try {
         const newEntry = await prisma.inquiry.create({
             data: {
+                email:data.email,
                 name: data.name,
-                salary: data.salary,
+                salary: data.salary
             }
         })
         console.log(newEntry);
     } catch (error) {
         console.error('Request error', error)
     }
+    return NextResponse.json({ "hello": "salary POST api" })
 }
+
+
+// async function createInquiry(data) { 
+// }

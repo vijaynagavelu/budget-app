@@ -1,18 +1,24 @@
 "use client"
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Image from 'next/image';
 
 export default function Home1() {
 
     const [name, setName] = useState();
     const [input, setInput] = useState();
+    const[value,setValue]= useState('');
+    const [salary, setSalary] = useState("");
+    const[timer,setTimer]=useState('');
 
-    async function response() {
-        // const response = await fetch("http://localhost:3000/api/expense", { method: "POST" });
-        const response = await fetch("http://localhost:3000/api/salary");
-        const result = await response.json();
-        console.log("result", result);
-    }
+
+    setTimeout(() => setTimer(1), 6000)
+
+    // async function response() {
+    //     const response = await fetch("http://localhost:3000/api/salary");
+    //     const result = await response.json();
+    //     console.log("result", result);
+    // }
 
     async function postData(data) {
         const response = await fetch("http://localhost:3000/api/salary", {
@@ -31,6 +37,24 @@ export default function Home1() {
     //     console.log("Success:", result);
     // }
 
+    const getData = useCallback(async() => {
+        const response = await fetch(`http://localhost:3000/api/expense/${value}`, {
+            method: "GET",
+           });
+       const result = await response.json();
+       const parsedResult  = JSON.parse(result.result);
+       if(parsedResult && parsedResult[0].salary){
+          setSalary(parsedResult[0].salary);       
+        }
+       console.log("salary_result",parsedResult );
+    }, [value]);
+    
+
+    useEffect(()=>{      
+        getData();
+        setValue(localStorage.getItem("email"))
+    },[getData]);
+
     function parseInteger(int) {
         console.log(int);
         if (int) {
@@ -42,8 +66,13 @@ export default function Home1() {
         }
     }
 
+    if(salary){
+        window.location.href = '/pieChart';
+    }
 
-    return (
+
+    if(timer){
+       return (
         <main className="flex justify-center">
 
             <div className="flex min-h-screen max-w-xl justify-center  flex-col  p-6">
@@ -82,19 +111,22 @@ export default function Home1() {
                 </div>
 
                 <Link href="/pieChart">
-                    <button  onClick={() => postData({ "name": name, "salary": input})}  className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
+                    <button  onClick={() => postData({"email":value ,"name": name, "salary": input})}  className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
                 </Link>
-
-                <br></br>
-
                 {/* <button onClick={() => response()} className='py-2 bg-green-600 w-full rounded-md'> get request</button> */}
-                <br></br>
-
                 {/* <button onClick={() => resDelete()} className='py-2 bg-red-600 w-full rounded-md'> delete request</button> */}
-
-                <br></br>
-
             </div>
         </main >
+     )
+    }
+    
+    return(
+        <div className='flex justify-center h-full items-center text-center '>
+        <Image className="emoji"
+            width={100}
+            height={100}
+            alt="sry"
+            src="https://media.tenor.com/UnFx-k_lSckAAAAC/amalie-steiness.gif"/>
+    </div>
     )
 }
