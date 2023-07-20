@@ -5,9 +5,12 @@ import { useEffect,useState,useCallback } from "react";
 
 export default function Home() {
 
-    const [note,setNote] = useState(null);
-    const [amount,setAmount] = useState(null);
-    const [tag, setTag] = useState(null);
+    const [note,setNote] = useState('');
+    const [amount,setAmount] = useState('');
+    const [tag, setTag] = useState('');
+    const [userId,setUserId] = useState('');
+    const[value,setValue]= useState('');
+
 
 
     async function postData(data) {
@@ -19,20 +22,22 @@ export default function Home() {
         console.log("Success:", result);
     }
 
-    // const getData = useCallback(async() => {
-    //     const response = await fetch(`http://localhost:3000/api/tags`, {
-    //         method: "GET",
-    //        });
-    //    const result = await response.json();
-    //    const parsedResult  = JSON.parse(result.result);
-    //    setTags(parsedResult);
-    //    console.log("salary_resultt",parsedResult );
-    // }, []);
+    const getData = useCallback(async() => {
+        const response = await fetch(`http://localhost:3000/api/expense/${value}`, {
+            method: "GET",
+           });
+       const result = await response.json();
+       //console.log(result);
+       const parsedResult  = JSON.parse(result.result);
+       console.log("result",parsedResult[0].id);
+       setUserId(parsedResult[0].id);
+    }, [value]); 
     
 
-    // useEffect(()=>{      
-    //     getData();
-    // },[getData]);
+    useEffect(()=>{    
+        setValue(localStorage.getItem("email"));  
+        getData();
+    },[getData]);
 
     return (
         <main className="flex flex-col justify-ceter">
@@ -66,7 +71,7 @@ export default function Home() {
 
 
                 <div className="flex flex-col grow justify-end mb-6" >
-                   <button onClick={() => postData({"tag":input })}   className='py-2 bg-indigo-600 justify-end rounded-md'>Add </button>
+                   <button onClick={() => postData({"tag":tag ,"note": note,"amount":amount, "userId": userId})}   className='py-2 bg-indigo-600 justify-end rounded-md'>Add </button>
                 </div>
     
             </div> 

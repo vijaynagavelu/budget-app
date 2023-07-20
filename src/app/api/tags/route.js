@@ -4,18 +4,21 @@ import { NextResponse } from 'next/server'
 const prisma = new PrismaClient()
 
 
-// export async function GET() {
-//     const users = await prisma.Expense_Tags.findMany()
-//     const result = JSON.stringify(users);
-//     return NextResponse.json({ result })
-// }
+export async function GET() {
+    const users = await prisma.User.findMany()
+    const result = JSON.stringify(users);
+    return NextResponse.json({ result })
+}
 
 export async function POST(req) {
     const data = await req.json();
     try {
-        const newEntry = await prisma.Expense_Tags.create({
+        const newEntry = await prisma.Expense.create({
             data: {
-                tags:data.tag,
+                tag:data.tag,
+                user_id:data.userId,
+                note:data.note,
+                type:data.amount,
             }
         })
         console.log(newEntry);
