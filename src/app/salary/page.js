@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import Image from 'next/image';
 
-export default function Home1() {
+export default function Home() {
 
     const [name, setName] = useState();
     const [input, setInput] = useState();

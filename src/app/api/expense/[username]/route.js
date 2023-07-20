@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 export async function GET(request, { params }) {
     const email = params.username;
-    const users = await prisma.inquiry.findMany({
+    const users = await prisma.User.findMany({
         where: {
             email: email,
         },
@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
 
 
 // export async function DELETE() {
-//     const deleteUser = await prisma.inquiry.deleteMany({
+//     const deleteUser = await prisma.User.deleteMany({
 //         where: {
 //             name: {
 //                 contains: 'example',

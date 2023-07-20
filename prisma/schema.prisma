@@ -8,12 +8,24 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Inquiry {
-  id             Int     @id @default(autoincrement())
-  email          String  @unique
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
   name           String
   salary         String?
   essentials     String?
   non_essentials String?
   savings        String?
+  expenses       Expense[]
+}
+
+model Expense {
+  id      Int    @id @default(autoincrement())
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id Int
+  tag     String
+  type    String
+  note    String
+
+  @@index([user_id]) // to make this as primary id  while querying primary id give results fast compared to other terms example name email 
 }

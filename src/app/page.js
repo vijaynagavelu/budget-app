@@ -98,7 +98,7 @@ export default function Home() {
     
                     <p className=' text-xs mb-1.5'>Email address</p>
                     <input readOnly className='text-black text-base p-3 font-medium  mb-4 rounded-md' placeholder='hello'
-                        value={"prasanna@gmail.com"}></input>
+                        value={""}></input>
     
                     <p className=' text-xs mb-1.5'>
                         Password</p>

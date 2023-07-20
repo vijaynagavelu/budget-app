@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 const prisma = new PrismaClient()
 
 export async function GET() {
-    const users = await prisma.inquiry.findMany()
+    const users = await prisma.User.findMany()
     const result = JSON.stringify(users);
     return NextResponse.json({ result })
 }
@@ -13,7 +13,7 @@ export async function GET() {
 export async function PUT(req){
     const data = await req.json();
     try {
-        const updateUsers = await prisma.inquiry.update({
+        const updateUsers = await prisma.User.update({
             where: {
               email: data.email,
               },
@@ -35,7 +35,7 @@ export async function PUT(req){
 export async function POST(req) {
     const data = await req.json();
     try {
-        const newEntry = await prisma.inquiry.create({
+        const newEntry = await prisma.User.create({
             data: {
                 email:data.email,
                 name: data.name,
@@ -50,5 +50,5 @@ export async function POST(req) {
 }
 
 
-// async function createInquiry(data) { 
+// async function createUser(data) { 
 // }

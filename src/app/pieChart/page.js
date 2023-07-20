@@ -3,7 +3,7 @@ import {useCallback, useEffect, useState} from "react";
 import {Group1} from "../../../utilities/Group1";
 
 
-export default function Home1() {
+export default function Home() {
 
     const [essentials, setEssentials] = useState(50);
     const [savings, setSavings] = useState(40);
