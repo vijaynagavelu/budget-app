@@ -46,7 +46,7 @@ export default function Home1() {
        if(parsedResult && parsedResult[0].salary){
           setSalary(parsedResult[0].salary);       
         }
-       console.log("salary_result",parsedResult );
+       console.log("salary_resultt",parsedResult );
     }, [value]);
     
 
