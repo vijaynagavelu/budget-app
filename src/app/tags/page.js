@@ -29,8 +29,10 @@ export default function Home() {
        const result = await response.json();
        //console.log(result);
        const parsedResult  = JSON.parse(result.result);
-       console.log("result",parsedResult[0].id);
+       if(parsedResult[0] && parsedResult[0].id){
+        //console.log("result",parsedResult[0].id);
        setUserId(parsedResult[0].id);
+       }
     }, [value]); 
     
 

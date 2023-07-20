@@ -18,7 +18,7 @@ export async function POST(req) {
                 tag:data.tag,
                 user_id:data.userId,
                 note:data.note,
-                type:data.amount,
+                amount:data.amount,
             }
         })
         console.log(newEntry);

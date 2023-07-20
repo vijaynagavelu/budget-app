@@ -24,7 +24,7 @@ model Expense {
   user_id Int
   user    User   @relation(fields: [user_id], references: [id])
   tag     String
-  type    String
+  amount  String
   note    String
 
   @@index([user_id]) // to make this as primary id  while querying primary id give results fast compared to other terms example name email 
