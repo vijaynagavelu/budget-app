@@ -20,6 +20,9 @@ export default function Home() {
         });
         const result = await response.json();
         console.log("Success:", result);
+        setAmount("");
+        setNote("");
+        setNote("");
     }
 
     const getData = useCallback(async() => {
@@ -42,10 +45,14 @@ export default function Home() {
     },[getData]);
 
     return (
-        <main className="flex flex-col justify-ceter">
-            <div className="flex   min-h-screen flex-col max-w-xl  px-6 pt-40 pb-4" >
-                <div className=" absolute  top-0 left-0 max-w-xl  text-2xl  pt-20 pl-6">
+        <main className="flex   justify-center">
+            <div className="flex min-h-screen flex-col min-w-[45%]    px-6 pt-40 pb-4" >
+                <div className=" absolute  top-0 left-0  text-2xl  pt-20 pl-6">
                     New Expense
+                </div>
+
+                <div  className="w-20 cursor-pointer absolute text-center top-0 right-0 pt-20  pr-6 rounded-md">
+                x
                 </div>
     
                 <div className=" mb-2 pt-10  text-sm">
