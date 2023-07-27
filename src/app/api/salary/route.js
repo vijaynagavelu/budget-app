@@ -31,12 +31,15 @@ export async function PUT(req){
 }
 
 
-
 export async function POST(req) {
     const data = await req.json();
+    // headers
+    // const currentUser = getCurrentUser(headers.idToken)
+    // findOne({ id: currentUser.id })
     try {
         const newEntry = await prisma.User.create({
             data: {
+                // id: currentUser.id
                 email:data.email,
                 name: data.name,
                 salary: data.salary

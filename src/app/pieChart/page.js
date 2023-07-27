@@ -2,8 +2,12 @@
 import {useCallback, useEffect, useState} from "react";
 import {Group1} from "../../../utilities/Group1";
 
+import useFirebaseAuthentication from '@/hooks/useFirebaseAuthentication';
+
 
 export default function Home() {
+
+    const  authUser = useFirebaseAuthentication();
 
     const [essentials, setEssentials] = useState(50);
     const [savings, setSavings] = useState(40);
@@ -18,6 +22,7 @@ export default function Home() {
     const [degC, setDegC] = useState(0);
     const [salary, setSalary] = useState("");
     const[value,setValue]= useState('');
+    const[hi,setHi]=useState("vijaynaga.0503@gmail.com");
 
     function parseInteger(int) {
         //console.log(int);
@@ -31,20 +36,41 @@ export default function Home() {
     }
 
     const logout=()=>{
-        localStorage.clear();
+        // localStorage.clear();
         window.location.href = '/';
     }
 
+    // const headers = {
+    //     "Content-Type": "value"
+    // };
+
+    // const getData = useCallback(async() => {
+    //     const response = await fetch(`http://localhost:3000/api/expense/${value}`, {
+    //         method: "GET",
+    //        });
+    //    const result = await response.json();
+    //    //console.log(result);
+    //    const parsedResult  = JSON.parse(result.result);
+    //    //console.log("result",parsedResult[0].salary);
+    //    setSalary(parsedResult[0].salary);
+    // }, [value]); 
+
     const getData = useCallback(async() => {
-        const response = await fetch(`http://localhost:3000/api/expense/${value}`, {
+       if(!value){
+        return;
+       }
+         const response = await fetch(`http://localhost:3000/budget-app/api/expense/${hi}`, {
+            headers : {
+                "authorization": value
+            },
             method: "GET",
            });
        const result = await response.json();
-       //console.log(result);
+       console.log(result);
        const parsedResult  = JSON.parse(result.result);
        //console.log("result",parsedResult[0].salary);
        setSalary(parsedResult[0].salary);
-    }, [value]); 
+    }, [hi, value]); 
 
 
     async function updateData(data) {
@@ -96,12 +122,20 @@ export default function Home() {
         savings
     ]);
 
+
+    useEffect(() => {
+        if(!authUser){
+            return;
+        }        
+        authUser.getIdToken().then((val) => setValue(val))
+    }, [authUser])
+
  
     useEffect(() => {
-        budgetRatio();
+        budgetRatio(); 
         getData();
-        setValue(localStorage.getItem("email"));
-    }, [budgetRatio, getData, salary]);
+        // setValue(localStorage.getItem("email"));
+    }, [budgetRatio,salary,getData]);
 
     return (
 

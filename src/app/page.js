@@ -4,13 +4,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import {auth,provider} from "./googleSignIn/config"
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, onAuthStateChanged } from 'firebase/auth';
+import useFirebaseAuthentication from '@/hooks/useFirebaseAuthentication';
 
 
 export default function Home() {
 
     const[value,setValue]= useState('');
     const[timer,setTimer]=useState('');
+    const authUser = useFirebaseAuthentication()
 
     const handleClick=()=>{
       signInWithPopup(auth,provider).then((data)=>{
@@ -25,6 +27,13 @@ export default function Home() {
     useEffect(()=>{
         setValue(localStorage.getItem("email"))
     },[value]);
+
+    useEffect(() => {
+        if (!authUser) {
+            return;
+        }
+        authUser.getIdToken().then((val) => console.log(val,authUser))
+    }, [authUser])
 
     if(value){
         window.location.href = '/salary';
