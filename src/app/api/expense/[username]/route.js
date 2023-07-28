@@ -1,53 +1,24 @@
+import { verifyFirebaseIdToken } from '@/utils/getFirebaseId';
 import { PrismaClient } from '@prisma/client'
-import admin from "firebase-admin";
-import { headers } from "next/headers";
 import { NextResponse } from 'next/server'
-import { createFirebaseAdminApp } from '@/utils/createFirebaseAdminApp';
-
-const prisma = new PrismaClient()
-
-// let defaultAuth = admin.auth(createFirebaseAdminApp());
-
-// export async function GET(request, { params }) {
- 
-// console.log("Low");
 
 // const headersList = headers();
 // const referer = headersList.get("authorization");
-
-// console.log( {referer});
-// console.log(params.username);
-// console.log(request.method)
-
-// defaultAuth
-//   .verifyIdToken(referer)
-//   .then((decodedToken) => {
-//      const uid = decodedToken.uid;
-//     console.log(uid);
-//        return NextResponse.json({"Success":"working good"});
-//   })
-
-//   .catch((error) => {
-//     console.log(error);
-//   });
-// }
-
-
-
 export async function GET(request, { params }) {
-  // headers
-  // const currentUser = getCurrentUser(headers.idToken)
+
+const prisma = new PrismaClient()
+const headersList =  request.headers;
+const idToken = headersList.get("authorization");
+//console.log("idToken",idToken)
+
+ const currentUser =  verifyFirebaseIdToken(idToken);
+// console.log(currentUser);
   // findOne({ id: currentUser.id })
 
-  const headersList = headers();
-const referer = headersList.get("Content-Type");
-
-  console.log("hai da")
-  console.log(headersList,referer)
     const email = params.username;
     const users = await prisma.User.findMany({
         where: {
-            email: email,
+            email: 'vijaynaga.0503@gmail.com',
         },
       })
     const result = JSON.stringify(users);

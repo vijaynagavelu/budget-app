@@ -40,26 +40,11 @@ export default function Home() {
         window.location.href = '/';
     }
 
-    // const headers = {
-    //     "Content-Type": "value"
-    // };
-
-    // const getData = useCallback(async() => {
-    //     const response = await fetch(`http://localhost:3000/api/expense/${value}`, {
-    //         method: "GET",
-    //        });
-    //    const result = await response.json();
-    //    //console.log(result);
-    //    const parsedResult  = JSON.parse(result.result);
-    //    //console.log("result",parsedResult[0].salary);
-    //    setSalary(parsedResult[0].salary);
-    // }, [value]); 
-
     const getData = useCallback(async() => {
        if(!value){
         return;
        }
-         const response = await fetch(`http://localhost:3000/budget-app/api/expense/${hi}`, {
+         const response = await fetch(`http://localhost:3000/api/expense/${hi}`, {
             headers : {
                 "authorization": value
             },
