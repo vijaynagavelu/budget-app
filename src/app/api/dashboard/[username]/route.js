@@ -11,25 +11,13 @@ export async function GET(request, { params }) {
     console.log("currentUser", currentUser)
 
     const id = params.username;
-    const users = await prisma.User.findMany({
+    const users = await prisma.Expense.findMany({
         where: {
-            id: id,
+            user_id: id,
         },
     })
     const result = JSON.stringify(users);
     return NextResponse.json({ result });
 }
-
-// export async function DELETE() {
-//     const deleteUser = await prisma.User.deleteMany({
-//         where: {
-//             name: {
-//                 contains: 'example',
-//             },
-//         },
-//     })
-//     return NextResponse.json({ "deleteUser": "LK" })
-// }
-
 
 

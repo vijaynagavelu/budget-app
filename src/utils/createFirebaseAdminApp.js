@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import serviceAccount from "../serviceAccountKey.json";
 
-export async function createFirebaseAdminApp() {
+export function createFirebaseAdminApp() {
     
     // if already created, return the same instance
     if (admin.apps.length > 0) {

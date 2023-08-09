@@ -1,23 +1,39 @@
 import admin from "firebase-admin";
-// import { headers } from "next/headers";
-import { createFirebaseAdminApp } from '@/utils/createFirebaseAdminApp';
+import { createFirebaseAdminApp } from "./createFirebaseAdminApp";
+import { headers } from "next/headers";
 
 
-export async function verifyFirebaseIdToken(idToken) {
+// export  function verifyFirebaseIdToken() {
+
+//   const headersList = headers();
+//   const idToken = headersList.get("authorization"); 
+
+//  let defaultAuth =  admin.auth(createFirebaseAdminApp()); 
+
+//  defaultAuth
+//    .verifyIdToken(idToken)
+//    .then((decodedToken) => {
+//      const uid = decodedToken.uid;
+//      console.log(uid);
+//      return  uid;
+//     })
+//    .catch((error) => {
+//      console.log(error);
+//     });
+// } 
 
 
-let defaultAuth =  admin.auth(createFirebaseAdminApp());
-// const headersList = headers();
-// const referer = headersList.get("authorization");
- await defaultAuth 
-  .verifyIdToken(idToken)
-  .then((decodedToken) => {
+export async function verifyFirebaseIdToken(request) {
+  const headersList = headers();
+  const idToken = headersList.get("authorization");
+
+  try {
+    const decodedToken = await admin.auth(createFirebaseAdminApp()).verifyIdToken(idToken);
     const uid = decodedToken.uid;
-    console.log(uid);
+    console.log("userID",uid);
     return uid;
-  })
-  .catch((error) => {
+  } catch (error) {
     console.log(error);
-    return true;
-  });
-  } 
+    return null; // Return null or handle the error accordingly based on your use case
+  }
+}

@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
+  id             String    @id
   email          String    @unique
   name           String
   salary         String?
@@ -20,12 +20,13 @@ model User {
 }
 
 model Expense {
-  id      Int    @id @default(autoincrement())
-  user_id Int
-  user    User   @relation(fields: [user_id], references: [id])
-  tag     String
-  amount  String
-  note    String
+  id        Int      @id @default(autoincrement())
+  user_id   String
+  user      User     @relation(fields: [user_id], references: [id])
+  need      String
+  amount    String
+  note      String
+  createdAt DateTime @default(now())
 
   @@index([user_id]) // to make this as primary id  while querying primary id give results fast compared to other terms example name email 
 }

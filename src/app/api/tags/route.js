@@ -15,10 +15,10 @@ export async function POST(req) {
     try {
         const newEntry = await prisma.Expense.create({
             data: {
-                tag:data.tag,
-                user_id:data.userId,
-                note:data.note,
-                amount:data.amount,
+                need: data.need,
+                user_id: data.userId,
+                note: data.note,
+                amount: data.amount,
             }
         })
         console.log(newEntry);
