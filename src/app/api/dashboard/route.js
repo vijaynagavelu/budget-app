@@ -8,45 +8,56 @@ export async function GET(request) {
 
     const prisma = new PrismaClient()
     const currentUser = await verifyFirebaseIdToken(request);
-    //console.log( currentUser, request.url)
-
     const parsedParams = parseQueryString(request.url);
-    //console.log("heloooo", parsedParams);
-    console.log("vera", parsedParams.tag);
 
-    function replacePercentEncoding(inputString) {
-        var modifiedString = inputString.replace(/%20/g, ' ');
-        return modifiedString;
+    const tag = removePercent(parsedParams.tag);
+    const startDate = new Date(removePercent(parsedParams.date));
+    const endDate = firstNextDayOfMonth(new Date(removePercent(parsedParams.date)));
+
+
+    function removePercent(inputString) {
+        return inputString.replace(/%20/g, ' ');
     }
 
-    if (replacePercentEncoding(parsedParams.tag) !== 'All') {
+    function firstNextDayOfMonth(date) {
+        if (!date) {
+            return null;
+        }
+        return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    }
+
+
+    if (tag !== 'All' && startDate && endDate) {
+        console.log("startDate", startDate);
+        //console.log("endDate", endDate);
         const filteredList = await prisma.Expense.findMany({
             where: {
                 user_id: currentUser,
-                need: replacePercentEncoding(parsedParams.tag),
+                need: tag,
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                }
             }
         });
-        console.log(filteredList);
         const result = JSON.stringify(filteredList);
         return NextResponse.json({ result });
     }
 
-    if (replacePercentEncoding(parsedParams.tag) == 'All') {
 
+    if (tag == 'All' && startDate && endDate) {
         const filteredList = await prisma.Expense.findMany({
             where: {
                 user_id: currentUser,
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                }
             }
         });
-        console.log(filteredList);
         const result = JSON.stringify(filteredList);
         return NextResponse.json({ result });
     }
-
-
-
-
-
 
 }
 

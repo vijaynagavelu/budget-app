@@ -30,7 +30,7 @@ export async function verifyFirebaseIdToken(request) {
   try {
     const decodedToken = await admin.auth(createFirebaseAdminApp()).verifyIdToken(idToken);
     const uid = decodedToken.uid;
-    console.log("userID",uid);
+    //console.log("userID",uid);
     return uid;
   } catch (error) {
     console.log(error);

@@ -8,7 +8,7 @@ export async function GET(request, { params }) {
     const prisma = new PrismaClient()
 
     const currentUser = await verifyFirebaseIdToken(request);
-    console.log("currentUser", currentUser)
+    //console.log("currentUser", currentUser)
 
     const id = params.username;
     const users = await prisma.User.findMany({

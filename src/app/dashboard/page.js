@@ -11,7 +11,6 @@ export default function Home() {
     const authUser = useFirebaseAuthentication();
     const [token, setToken] = useState('');
     const [authUserID, setAuthUserId] = useState('');
-    const [list, setList] = useState(null);
     const [filteredList, setFilteredList] = useState(null);
     const [filter, setFilter] = useState('All');
 
@@ -20,7 +19,7 @@ export default function Home() {
     const [calendar, setCalendar] = useState(new Date());
     const [showCalendar, setShowCalendar] = useState(false);
 
-    const [spent, setSpent] = useState('');
+    const [spent, setSpent] = useState(50);
     const [essentialsSpent, setEssentialsSpent] = useState('');
     const [nonessentialsSpent, setNonessentialsSpent] = useState('');
 
@@ -59,6 +58,37 @@ export default function Home() {
         return value.toLocaleString();
     }
 
+    function daysRemainingInMonth() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth();
+        const lastDayOfMonth = new Date(year, month + 1, 0);
+        const totalDaysInMonth = lastDayOfMonth.getDate();
+        const remainingDays = totalDaysInMonth - today.getDate();
+
+        if (remainingDays === 0) {
+            return "Last day of the month!";
+        } else if (remainingDays === 1) {
+            return "1 day left";
+        } else {
+            return `${remainingDays} days left`;
+        }
+    }
+
+    function SimplifyDateFunction(data) {
+        const consolidatedObject = data.reduce((result, item) => {
+            result[item.need] = item._sum.amount;
+            return result;
+        }, {});
+        return consolidatedObject;
+    }
+
+    function firstDayOfMonth(date) {
+        const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        setStartDate(firstDayOfMonth);
+        //console.log(firstDayOfMonth);
+    }
+
     {
         const getData = useCallback(async () => {
             if (!authUserID) {
@@ -89,17 +119,18 @@ export default function Home() {
             });
             const result = await response.json();
             const parsedResult = JSON.parse(result.result);
-            console.log("result getAmount ", parsedResult);
-
-            // const mergedObject = Object.assign({}, ...parsedResult);
-            // console.log(mergedObject)
+            //console.log("result getAmount ", parsedResult);
+            const amount = SimplifyDateFunction(parsedResult);
+            setSpent(amount.Essentials + amount["Non Essentials"])
+            setEssentialsSpent(amount.Essentials);
+            setNonessentialsSpent(amount["Non Essentials"]);
         }, [token]);
 
         const getList = useCallback(async () => {
             if (!token) {
                 return;
             }
-            const response = await fetch(`http://localhost:3000/api/dashboard?tag=${filter}`, {
+            const response = await fetch(`http://localhost:3000/api/dashboard?tag=${filter}&date=${startDate}`, {
                 headers: {
                     "authorization": token
                 },
@@ -107,10 +138,9 @@ export default function Home() {
             });
             const result = await response.json();
             const parsedResult = JSON.parse(result.result);
-            setList(parsedResult);
             setFilteredList(parsedResult);
-            console.log("result ", parsedResult);
-        }, [filter, token]);
+            //console.log("result ", parsedResult);
+        }, [filter, startDate, token]);
 
         const budgetRatio = useCallback(() => {
             let num = salary.replaceAll(',', '');
@@ -128,11 +158,9 @@ export default function Home() {
             //console.log(num);
         }, [essentialsShare, nonessentialsShare, salary, savingsShare]);
 
-
         useEffect(() => {
             budgetRatio();
         }, [budgetRatio]);
-
 
         useEffect(() => {
             if (!authUser) {
@@ -146,14 +174,11 @@ export default function Home() {
             getList();
             getAmount();
         }, [authUser, getData, getList, getAmount])
-
     }// functions
 
-    function firstDayOfMonth(date) {
-        const firstDayOfMonth = new Date(date.getFullYear(), currentDate.getMonth(), 2);
-        setStartDate(firstDayOfMonth);
-        console.log(firstDayOfMonth);
-    }
+    useEffect(() => {
+        firstDayOfMonth(new Date());
+    }, [])
 
 
     if (!filteredList) {
@@ -161,23 +186,22 @@ export default function Home() {
         return;
     }
 
-    //console.log(startDate);
 
     return (
         <main className="flex justify-center">
             <div className="flex mt-16 min-h-screen min-w-[80%] flex-col max-w-xl justify-center px-6 pt-8 pb-4" >
 
                 <div className="topPortion">
-                    <div className=" absolute  top-0 left-0 max-w-xl pt-6 pl-4">
-                        <div className="text-2xl">☰</div>
+                    <div className=" absolute  top-0 left-0 max-w-xl pt-4 pl-4">
+                        <div className="text-2xl cursor-pointer">☰</div>
                         <div className=" mt-2 -ml-2">
-                            <DatePicker className="w-40 mb-2 z-11 cursor-pointer  caret-transparent focus:outline-none h-min text-4xl bg-black"
+                            <DatePicker className="w-56 mb-2 z-11 cursor-pointer caret-transparent focus:outline-none h-min text-4xl bg-black"
                                 selected={startDate}
                                 onChange={(date) => firstDayOfMonth(date)}
                                 dateFormat=" MMMM "
                                 showMonthYearPicker
                             />
-                            <div className="ml-[15px]">22 days left</div>
+                            <div className="ml-[15px]">{daysRemainingInMonth()}</div>
                         </div>
 
                     </div>
@@ -185,7 +209,7 @@ export default function Home() {
                     <div className="flex mt-6 justify-center">
                         <div className="w-40 h-40 bg-white z-5 rounded-full whiteRound">
                             <div className="text-black w-40 flex justify-center font-semibold totalAmount">
-                                ₹{numToString(salary)}
+                                ₹{numToString(parseInteger(salary))}
                             </div>
                         </div>
 
@@ -195,7 +219,7 @@ export default function Home() {
                     </div>
 
 
-                    <div className="flex justify-around max-w-xl  ">
+                    <div className="flex justify-around w-full">
                         <div className="flex flex-col align-center text-sm text-center mb-2 text-gray-400"> <span>₹{numToString(spent)}</span>  <span>Spent</span>  </div>
                         <div className="flex flex-col align-center text-sm text-center mb-2 text-cyan-400"><span>₹{numToString(parseInteger(salary) - spent)} </span>  <span>Left</span></div>
                     </div>
@@ -230,8 +254,8 @@ export default function Home() {
                     <div className="flex  justify-between max-w-xl pt-6">
                         <div className=" text-lg mb-2">Transactions </div>
 
-                        <div className="flex " onChange={(e) => { setFilter([e.target.value]) }} >
-                            <select className="text-white bg-transparent border-2  border-gray-500 text-base font-medium grow rounded-md h-8 w-12">
+                        <div className="flex" onChange={(e) => { setFilter([e.target.value]) }} >
+                            <select className="text-white bg-transparent border-2 cursor-pointer border-gray-500 text-base font-medium grow rounded-md h-8 w-12">
                                 <option className="flex text-white bg-black" value='All' >All</option>
                                 <option className="text-white bg-black" value="Non Essentials" > NE -Non Essentials </option>
                                 <option className="text-white bg-black" value="Essentials" > Es -Essentials</option>
@@ -253,21 +277,23 @@ export default function Home() {
 
                     <div className="text-sm px-2 mt-2 text-gray-400">Today </div>
 
-                    {filteredList.map((item, i) => {
-                        return (
-                            <div key={i} className="flex justify-between items-center py-2">
-                                {(item.need == "Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
-                                {(item.need == "Non Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
-                                <div className="basis-4/6">
-                                    <div className="text-base" >{item.note}</div>
-                                    <div className="text-xs text-gray-400">{item.need} </div>
+                    <div className=" h-56 w-full overflow-auto custom-scrollbar">
+                        {filteredList.map((item, i) => {
+                            return (
+                                <div key={i} className="flex justify-between items-center py-2">
+                                    {(item.need == "Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
+                                    {(item.need == "Non Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
+                                    <div className="basis-4/6">
+                                        <div className="text-base" >{item.note}</div>
+                                        <div className="text-xs text-gray-400">{item.need} </div>
+                                    </div>
+                                    <div className="text-sm text-right basis-2/6">-₹{item.amount}.00</div>
                                 </div>
-                                <div className="text-sm text-right basis-2/6">-₹{item.amount}.00</div>
-                            </div>
-                        )
-                    })}
-                </div>
+                            )
+                        })}
+                    </div>
 
+                </div>
 
                 {/* <div className="footer">
                     <div className="text-sm px-2 mt-2 text-gray-400">Today </div>

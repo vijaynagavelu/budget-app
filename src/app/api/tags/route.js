@@ -19,7 +19,7 @@ export async function GET(request) {
         },
     });
     const result = JSON.stringify(needValues);
-    console.log(result);
+    //console.log(result);
     return NextResponse.json({ result })
 }
 
