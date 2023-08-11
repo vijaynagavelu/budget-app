@@ -1,24 +1,42 @@
 import { PrismaClient } from '@prisma/client'
 import { NextResponse } from 'next/server'
+import { verifyFirebaseIdToken } from '@/utils/getFirebaseId';
+
 
 const prisma = new PrismaClient()
 
 
-export async function GET() {
-    const users = await prisma.User.findMany()
-    const result = JSON.stringify(users);
+export async function GET(request) {
+    const currentUser = await verifyFirebaseIdToken(request);
+
+    const needValues = await prisma.Expense.groupBy({
+        by: ["need"],
+        where: {
+            user_id: currentUser,
+        },
+        _sum: {
+            amount: true,
+        },
+    });
+    const result = JSON.stringify(needValues);
+    console.log(result);
     return NextResponse.json({ result })
 }
 
-export async function POST(req) {
-    const data = await req.json();
+
+
+export async function POST(request) {
+    const currentUser = await verifyFirebaseIdToken(request);
+    const data = await request.json();
     try {
         const newEntry = await prisma.Expense.create({
             data: {
                 need: data.need,
-                user_id: data.userId,
+                user_id: currentUser,
                 note: data.note,
-                amount: data.amount,
+                amount: parseInt(data.amount),
+                createdAt: data.createdAt,
+                updatedAt: data.updatedAt,
             }
         })
         console.log(newEntry);

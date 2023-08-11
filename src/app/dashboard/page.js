@@ -3,7 +3,8 @@ import useFirebaseAuthentication from "@/hooks/useFirebaseAuthentication";
 import { useCallback, useEffect, useState } from "react";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Home() {
 
@@ -12,7 +13,9 @@ export default function Home() {
     const [authUserID, setAuthUserId] = useState('');
     const [list, setList] = useState(null);
     const [filteredList, setFilteredList] = useState(null);
-    const [filter, setFilter] = useState([]);
+    const [filter, setFilter] = useState('All');
+
+    const [startDate, setStartDate] = useState(new Date());
 
     const [calendar, setCalendar] = useState(new Date());
     const [showCalendar, setShowCalendar] = useState(false);
@@ -29,6 +32,7 @@ export default function Home() {
     const [degB, setDegB] = useState(140);
     const [degC, setDegC] = useState(0);
     const [salary, setSalary] = useState("");
+
 
     function parseInteger(int) {
         //console.log(int);
@@ -69,17 +73,33 @@ export default function Home() {
             const result = await response.json();
             const parsedResult = JSON.parse(result.result);
             // console.log("result", parsedResult[0]);
-            setEssentialsShare(parsedResult[0].essentials)
-            setSavingsShare(parsedResult[0].savings)
-            setNonessentialsShare(parsedResult[0].non_essentials)
+            setEssentialsShare(parsedResult[0].essentials), setSavingsShare(parsedResult[0].savings), setNonessentialsShare(parsedResult[0].non_essentials)
             setSalary(parsedResult[0].salary);
         }, [authUserID, token]);
 
-        const getList = useCallback(async () => {
-            if (!authUserID) {
+        const getAmount = useCallback(async () => {
+            if (!token) {
                 return;
             }
-            const response = await fetch(`http://localhost:3000/api/dashboard/${authUserID}`, {
+            const response = await fetch(`http://localhost:3000/api/tags`, {
+                headers: {
+                    "authorization": token
+                },
+                method: "GET",
+            });
+            const result = await response.json();
+            const parsedResult = JSON.parse(result.result);
+            console.log("result getAmount ", parsedResult);
+
+            // const mergedObject = Object.assign({}, ...parsedResult);
+            // console.log(mergedObject)
+        }, [token]);
+
+        const getList = useCallback(async () => {
+            if (!token) {
+                return;
+            }
+            const response = await fetch(`http://localhost:3000/api/dashboard?tag=${filter}`, {
                 headers: {
                     "authorization": token
                 },
@@ -89,69 +109,30 @@ export default function Home() {
             const parsedResult = JSON.parse(result.result);
             setList(parsedResult);
             setFilteredList(parsedResult);
-            //console.log("result ", parsedResult);
-        }, [authUserID, token]);
+            console.log("result ", parsedResult);
+        }, [filter, token]);
 
         const budgetRatio = useCallback(() => {
             let num = salary.replaceAll(',', '');
             num = parseInt(num);
-            //console.log(num);
-            if ((parseInteger(essentialsShare) + parseInteger(nonessentialsShare) + parseInteger(savingsShare)) === num) {
-                let deg1 = (360 * (parseInteger(essentialsShare) / num)).toFixed(2);
-                let deg2 = (parseInteger((360 * (parseInteger(nonessentialsShare) / num)).toFixed(2)) + parseInteger(deg1));
-                let deg3 = (360 * (parseInteger(savingsShare) / num)).toFixed(2);
-                setDegA(deg1);
-                setDegB(deg2);
-                setDegC(deg3);
+            if (essentialsShare && nonessentialsShare) {
+                if ((parseInteger(essentialsShare) + parseInteger(nonessentialsShare) + parseInteger(savingsShare)) === num) {
+                    let deg1 = (360 * (parseInteger(essentialsShare) / num)).toFixed(2);
+                    let deg2 = (parseInteger((360 * (parseInteger(nonessentialsShare) / num)).toFixed(2)) + parseInteger(deg1));
+                    let deg3 = (360 * (parseInteger(savingsShare) / num)).toFixed(2);
+                    setDegA(deg1);
+                    setDegB(deg2);
+                    setDegC(deg3);
+                }
             }
+            //console.log(num);
         }, [essentialsShare, nonessentialsShare, salary, savingsShare]);
 
-        const spentAmount = useCallback(async () => {
-            if (!list) {
-                return;
-            }
-            const spent = list.reduce((total, item) => {
-                return parseInteger(item.amount) + total;
-            }, 0)
-            setSpent(spent);
-            return spent;
-        }, [list]);
-
-        const spentOnEssentials = useCallback(async () => {
-            if (!list) {
-                return;
-            }
-            const spent = list.reduce((total, item) => {
-                if (item.need == "Essentials") {
-                    return parseInteger(item.amount) + total;
-                } else return 0 + total;
-            }, 0)
-            setEssentialsSpent(spent)
-            return spent;
-        }, [list]);
-
-        const spentOnNonEssentials = useCallback(async () => {
-            if (!list) {
-                return;
-            }
-            const spent = list.reduce((total, item) => {
-                if (item.need == "Non Essentials") {
-                    return parseInteger(item.amount) + total;
-                } else return 0 + total;
-            }, 0)
-            setNonessentialsSpent(spent)
-            return spent;
-        }, [list]);
 
         useEffect(() => {
             budgetRatio();
         }, [budgetRatio]);
 
-        useEffect(() => {
-            spentAmount();
-            spentOnNonEssentials();
-            spentOnEssentials();
-        }, [spentAmount, spentOnEssentials, spentOnNonEssentials]);
 
         useEffect(() => {
             if (!authUser) {
@@ -163,38 +144,16 @@ export default function Home() {
             });
             getData();
             getList();
-        }, [authUser, getData, getList,])
-
-
-        const filterList = useCallback((filteredArray, selectedFilterList) => {
-            if (selectedFilterList.length && selectedFilterList[0] !== "null") {
-                return filteredArray.filter((list) => {
-                    return selectedFilterList.includes(list.need);
-                });
-            } else {
-                return filteredArray;
-            }
-        }, []);
-
-        const selectedList = useCallback(() => {
-            if (!list) {
-                return;
-            }
-            var filteredItems = filterList(list, filter);
-            //console.log(filteredItems);
-            setFilteredList(filteredItems);
-        }, [filter, filterList, list]);
-
-        useEffect(() => {
-            selectedList();
-        }, [selectedList])
+            getAmount();
+        }, [authUser, getData, getList, getAmount])
 
     }// functions
 
-
-
-
-
+    function firstDayOfMonth(date) {
+        const firstDayOfMonth = new Date(date.getFullYear(), currentDate.getMonth(), 2);
+        setStartDate(firstDayOfMonth);
+        console.log(firstDayOfMonth);
+    }
 
 
     if (!filteredList) {
@@ -202,18 +161,29 @@ export default function Home() {
         return;
     }
 
+    //console.log(startDate);
+
     return (
         <main className="flex justify-center">
             <div className="flex mt-16 min-h-screen min-w-[80%] flex-col max-w-xl justify-center px-6 pt-8 pb-4" >
 
                 <div className="topPortion">
-                    <div className=" absolute  top-0 left-0 max-w-xl pt-6 pl-6">
-                        <div className=" text-4xl mb-2"> ☰ November </div>
-                        <div className="  text-xs">22 days left</div>
+                    <div className=" absolute  top-0 left-0 max-w-xl pt-6 pl-4">
+                        <div className="text-2xl">☰</div>
+                        <div className=" mt-2 -ml-2">
+                            <DatePicker className="w-40 mb-2 z-11 cursor-pointer  caret-transparent focus:outline-none h-min text-4xl bg-black"
+                                selected={startDate}
+                                onChange={(date) => firstDayOfMonth(date)}
+                                dateFormat=" MMMM "
+                                showMonthYearPicker
+                            />
+                            <div className="ml-[15px]">22 days left</div>
+                        </div>
+
                     </div>
 
-                    <div className="flex justify-center">
-                        <div className="w-40 h-40 bg-white z-10 rounded-full whiteRound">
+                    <div className="flex mt-6 justify-center">
+                        <div className="w-40 h-40 bg-white z-5 rounded-full whiteRound">
                             <div className="text-black w-40 flex justify-center font-semibold totalAmount">
                                 ₹{numToString(salary)}
                             </div>
@@ -251,10 +221,10 @@ export default function Home() {
                     </div>
                     <div>₹{numToString(nonessentialsSpent)} of ₹{numToString(parseInteger(nonessentialsShare))}</div>
 
+                    <div className="mt-8 m-auto w-40 border-b border-b-gray-400"></div>
 
                 </div>
 
-                <div className="mt-8 m-auto w-40 border-b border-b-gray-400"></div>
 
                 <div className="footer">
                     <div className="flex  justify-between max-w-xl pt-6">
@@ -262,7 +232,7 @@ export default function Home() {
 
                         <div className="flex " onChange={(e) => { setFilter([e.target.value]) }} >
                             <select className="text-white bg-transparent border-2  border-gray-500 text-base font-medium grow rounded-md h-8 w-12">
-                                <option className="flex text-white bg-black" value='null' >All</option>
+                                <option className="flex text-white bg-black" value='All' >All</option>
                                 <option className="text-white bg-black" value="Non Essentials" > NE -Non Essentials </option>
                                 <option className="text-white bg-black" value="Essentials" > Es -Essentials</option>
                             </select>
@@ -274,12 +244,12 @@ export default function Home() {
                     <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false), console.log(calendar) }} value={calendar} />
 
 
-                    <ul className="text-xs flex gap-2">
+                    {/* <ul className="text-xs flex gap-2">
                         <li className="w-fit border-2 rounded-md px-2 border-gray-500">All</li>
                         <li className="w-fit border-2 rounded-md px-2 border-gray-500">Food</li>
                         <li className="w-fit border-2 rounded-md px-2 border-gray-500">Shopping</li>
                         <li className="w-fit border-2 rounded-md px-2 border-gray-500">Electricity</li>
-                    </ul>
+                    </ul> */}
 
                     <div className="text-sm px-2 mt-2 text-gray-400">Today </div>
 
@@ -299,7 +269,7 @@ export default function Home() {
                 </div>
 
 
-                <div className="footer">
+                {/* <div className="footer">
                     <div className="text-sm px-2 mt-2 text-gray-400">Today </div>
 
                     <div className="flex justify-between items-center py-2">
@@ -329,7 +299,7 @@ export default function Home() {
                         </div>
                         <div className="text-sm">-₹364.00</div>
                     </div>
-                </div>
+                </div> */}
 
             </div>
         </main>

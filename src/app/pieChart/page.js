@@ -62,7 +62,9 @@ export default function Home() {
         console.log(result);
         const parsedResult = JSON.parse(result.result);
         //console.log("result",parsedResult[0].salary);
-        setData(parsedResult[0].essentials)
+        if (parsedResult[0].essentials) {
+            setData(parsedResult[0].essentials)
+        }
         setSalary(parsedResult[0].salary);
     }, [authUserID, token]);
 

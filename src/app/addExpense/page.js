@@ -10,8 +10,9 @@ export default function Home() {
     const [note, setNote] = useState('');
     const [amount, setAmount] = useState('');
     const [need, setNeed] = useState('');
-    const [userId, setUserId] = useState('');
     const [token, setToken] = useState('');
+    const [createdAt, setCreatedAt] = useState('');
+    const [updatedAt, setUpdatedAt] = useState('');
     const authUser = useFirebaseAuthentication();
 
 
@@ -38,11 +39,25 @@ export default function Home() {
         }
         authUser.getIdToken().then((val) => {
             setToken(val);
-            setUserId(authUser.uid);
+            firstDayOfMonth();
+            currentDayOfMonth();
         })
     }, [authUser])
 
 
+    function firstDayOfMonth() {
+        const currentDate = new Date(); // Current date and time
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
+        setCreatedAt(firstDayOfMonth);
+        console.log(firstDayOfMonth);
+    }
+
+    function currentDayOfMonth() {
+        const currentDate = new Date(); // Current date and time
+        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+        setUpdatedAt(currentDayOfMonth);
+        console.log(currentDayOfMonth);
+    }
 
     return (
         <main className="flex   justify-center">
@@ -62,7 +77,7 @@ export default function Home() {
 
                 <div className=" mb-2 pt-4  text-sm">Amount</div>
                 <div className="flex h-10">
-                    <input type="text" onChange={(e) => { setAmount(e.target.value) }} className='text-white grow bg-transparent border-2 border-[#E3EBFD] rounded-md text-base p-1 font-semibold p-3' placeholder="" value={amount} ></input>
+                    <input type="number" onChange={(e) => { setAmount(e.target.value) }} className='text-white  grow bg-transparent border-2 border-[#E3EBFD] rounded-md text-base p-1 font-semibold p-3' placeholder="" value={amount} ></input>
                 </div>
 
                 <div className=" mb-2 pt-4  text-sm">Need</div>
@@ -76,7 +91,7 @@ export default function Home() {
 
 
                 <div className="flex flex-col grow justify-end mb-6" >
-                    <button onClick={() => postData({ "need": need, "note": note, "amount": amount, "userId": userId })} className='py-2 bg-indigo-600 justify-end rounded-md'>Add </button>
+                    <button onClick={() => postData({ "need": need, "note": note, "amount": amount, "createdAt": createdAt, "updatedAt": updatedAt })} className='py-2 bg-indigo-600 justify-end rounded-md'>Add </button>
                 </div>
 
             </div>
