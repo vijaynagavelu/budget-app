@@ -16,7 +16,7 @@ export default function Home() {
 
     const [startDate, setStartDate] = useState(new Date());
 
-    const [calendar, setCalendar] = useState(new Date());
+    const [calendar, setCalendar] = useState(null);
     const [showCalendar, setShowCalendar] = useState(false);
 
     const [spent, setSpent] = useState(50);
@@ -130,7 +130,7 @@ export default function Home() {
             if (!token) {
                 return;
             }
-            const response = await fetch(`http://localhost:3000/api/dashboard?tag=${filter}&date=${startDate}`, {
+            const response = await fetch(`http://localhost:3000/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
                 headers: {
                     "authorization": token
                 },
@@ -140,7 +140,7 @@ export default function Home() {
             const parsedResult = JSON.parse(result.result);
             setFilteredList(parsedResult);
             //console.log("result ", parsedResult);
-        }, [filter, startDate, token]);
+        }, [calendar, filter, startDate, token]);
 
         const budgetRatio = useCallback(() => {
             let num = salary.replaceAll(',', '');
