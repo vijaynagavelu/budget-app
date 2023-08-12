@@ -189,7 +189,7 @@ export default function Home() {
 
     return (
         <main className="flex justify-center">
-            <div className="flex mt-16 min-h-screen min-w-[80%] flex-col max-w-xl justify-center px-6 pt-8 pb-4" >
+            <div className="flex mt-16  min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-8 pb-4" >
 
                 <div className="topPortion">
                     <div className=" absolute  top-0 left-0 max-w-xl pt-4 pl-4">
@@ -224,9 +224,9 @@ export default function Home() {
                         <div className="flex flex-col align-center text-sm text-center mb-2 text-cyan-400"><span>₹{numToString(parseInteger(salary) - spent)} </span>  <span>Left</span></div>
                     </div>
 
-                    <div className="flex justify-between max-w-xl pt-10">
+                    <div className="flex justify-between w-full pt-10">
                         <div className="flex align-center text-md text-center mb-1"> Essentials</div>
-                        <div className="flex align-center text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(essentialsShare) - essentialsSpent)} left </div>
+                        <div className="flex align-center  text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(essentialsShare) - essentialsSpent)} left </div>
                     </div>
 
                     <div className=" bg-white rounded-md">
@@ -234,7 +234,7 @@ export default function Home() {
                     </div>
                     <div>₹{numToString(essentialsSpent)} of ₹{numToString(parseInteger(essentialsShare))}</div>
 
-                    <div className="flex justify-between max-w-xl pt-6">
+                    <div className="flex justify-between w-full pt-6">
                         <div className="flex align-center text-md text-center mb-1">Non-Essentials</div>
                         <div className="flex align-center text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(nonessentialsShare) - nonessentialsSpent)}  left </div>
                     </div>
@@ -251,7 +251,7 @@ export default function Home() {
 
 
                 <div className="footer">
-                    <div className="flex  justify-between max-w-xl pt-6">
+                    <div className="flex  justify-between w-full pt-6">
                         <div className=" text-lg mb-2">Transactions </div>
 
                         <div className="flex" onChange={(e) => { setFilter([e.target.value]) }} >
@@ -263,7 +263,14 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="w-fit border-2 cursor-pointer rounded-md px-2 border-gray-500 mb-4 text-sm" onClick={() => { setShowCalendar(true) }}>Pick a date 📅</div>
+                    <div className="flex items-center gap-2 w-full mb-4">
+                        <div className=" w-fit border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm" onClick={() => { setShowCalendar(true) }}>Pick a date 📅</div>
+
+                        <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
+                            <span className="text-white font-normal text-xs">clear date</span>
+                        </button>
+
+                    </div>
 
                     <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false), console.log(calendar) }} value={calendar} />
 
