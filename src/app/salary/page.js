@@ -6,14 +6,12 @@ import useFirebaseAuthentication from "@/hooks/useFirebaseAuthentication";
 
 export default function Home() {
 
-    const [id, setId] = useState();
     const [name, setName] = useState('');
     const [token, setToken] = useState('');
     const [inputSalary, setInputSalary] = useState();
     const [email, setEmail] = useState('');
     const [salary, setSalary] = useState("");
     const [timer, setTimer] = useState('');
-    const [authUserID, setAuthUserId] = useState('');
     const authUser = useFirebaseAuthentication();
 
 
@@ -21,6 +19,9 @@ export default function Home() {
 
     async function postData(data) {
         const response = await fetch("http://localhost:3000/api/salary", {
+            headers: {
+                "authorization": token
+            },
             method: "POST",
             body: JSON.stringify(data),
         });
@@ -30,10 +31,10 @@ export default function Home() {
 
 
     const getData = useCallback(async () => {
-        if (!token && !authUserID) {
+        if (!token) {
             return;
         }
-        const response = await fetch(`http://localhost:3000/api/expense/${authUserID}`, {
+        const response = await fetch(`http://localhost:3000/api/salary`, {
             headers: {
                 "authorization": token
             },
@@ -46,17 +47,9 @@ export default function Home() {
             setSalary(parsedResult[0].salary);
         }
         else {
-            const response = await fetch(`http://localhost:3000/api/app`, {
-                headers: {
-                    "authorization": token
-                },
-                method: "GET",
-            });
-            const result = await response.json();
-            console.log(result.currentUser);
-            setId(result.currentUser);
+            console.log("No data");
         }
-    }, [token, authUserID]);
+    }, [token]);
 
 
     useEffect(() => {
@@ -66,7 +59,6 @@ export default function Home() {
         authUser.getIdToken().then((val) => {
             setToken(val);
             setEmail(authUser.email);
-            setAuthUserId(authUser.uid);
             console.log(authUser.email)
             //console.log(val, authUser);
         })
@@ -128,7 +120,7 @@ export default function Home() {
 
                     {/* <Link href="/pieChart"> */}
                     <Link href="/pieChart">
-                        <button onClick={() => postData({ "id": id, "email": email, "name": name, "salary": inputSalary })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
+                        <button onClick={() => postData({ "email": email, "name": name, "salary": inputSalary })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
                     </Link>
                     {/* <button onClick={() => response()} className='py-2 bg-green-600 w-full rounded-md'> get request</button> */}
                     {/* <button onClick={() => resDelete()} className='py-2 bg-red-600 w-full rounded-md'> delete request</button> */}

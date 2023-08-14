@@ -20,14 +20,15 @@ model User {
 }
 
 model Expense {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   user_id   String
-  user      User   @relation(fields: [user_id], references: [id])
+  user      User     @relation(fields: [user_id], references: [id])
   need      String
   amount    Int
   note      String
   createdAt String
   updatedAt String
+  time      DateTime @default(now())
 
   @@index([user_id]) // to make this as primary id  while querying primary id give results fast compared to other terms example name email 
 }

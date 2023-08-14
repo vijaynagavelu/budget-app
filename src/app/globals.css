@@ -20,9 +20,9 @@ body {
       rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-  width: 25px;
+.piechartInput::-webkit-outer-spin-button,
+.piechartInput::-webkit-inner-spin-button {
+  width: 225px;
   position: absolute;
   top: 0;
   right: 0;
@@ -30,7 +30,7 @@ input[type=number]::-webkit-inner-spin-button {
   opacity: 1;
 }
 
-input[type=number] {
+.piechartInput {
   position: relative;
   padding: 20px;
 }
@@ -72,4 +72,10 @@ input[type=number] {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.specialInput::-webkit-inner-spin-button,
+.specialInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

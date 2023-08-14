@@ -3,7 +3,7 @@ import { React, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { auth, provider } from "./googleSignIn/config"
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import useFirebaseAuthentication from '@/hooks/useFirebaseAuthentication';
 
 
@@ -22,19 +22,11 @@ export default function Home() {
         })
     }
 
-    const logOut = () => {
-        signOut(auth).then(() => {
-            // Sign-out successful.
-        }).catch((error) => {
-            // An error happened.
-        });
-    }
-
     const getData = useCallback(async () => {
         if (!token) {
             return;
         }
-        const response = await fetch(`http://localhost:3000/api/app`, {
+        const response = await fetch(`http://localhost:3000/api/salary`, {
             headers: {
                 "authorization": token
             },
@@ -85,7 +77,7 @@ export default function Home() {
                 </div>
 
 
-                <div className='flex px-28 flex-col justify-center lg:basis-1/2'>
+                <div className='flex px-10 flex-col justify-center lg:basis-1/2'>
                     <div className=" max-w-xl  lg:hidden   text-2xl  mb-16">
                         Budgetry
                     </div>
@@ -107,8 +99,6 @@ export default function Home() {
                                 Continue with Google</p>
                         </div>
 
-                        <div onClick={logOut} className='py-3 text-sm cursor-pointer'>Logout</div>
-
                         <div className='flex flex-row w-full  justify-center items-center border gap-x-2  rounded-md  px-2'>
                             <Image className="emoji "
                                 width={18}
@@ -122,7 +112,7 @@ export default function Home() {
                     </div>
 
 
-                    <div className="flex flex-row items-center mb-5 mt-16 lg:mt-6">
+                    <div className="flex flex-row items-center mb-5 mt-6 lg:mt-6">
                         <span className="border h-0 w-full"></span>
                         <span>or</span>
                         <span className="border h-0 w-full"></span>
@@ -130,7 +120,7 @@ export default function Home() {
 
 
                     <p className=' text-xs mb-1.5'>Email address</p>
-                    <input readOnly className='text-black text-base p-3 font-medium  mb-4 rounded-md' placeholder='hello'
+                    <input readOnly className='text-black text-base p-3 font-medium  mb-4 rounded-md' placeholder=''
                         token={""}></input>
 
                     <p className=' text-xs mb-1.5'>

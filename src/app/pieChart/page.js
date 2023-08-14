@@ -4,17 +4,17 @@ import { Group1 } from "../../../utilities/Group1";
 
 import useFirebaseAuthentication from '@/hooks/useFirebaseAuthentication';
 import Link from "next/link";
-import { signOut } from "firebase/auth";
-import { auth } from "../googleSignIn/config"
+import Image from 'next/image';
+
 
 
 export default function Home() {
 
     const authUser = useFirebaseAuthentication();
 
-    const [essentials, setEssentials] = useState(0);
-    const [savings, setSavings] = useState(0);
-    const [nonessentials, setNonessentials] = useState(0);
+    const [essentials, setEssentials] = useState('');
+    const [savings, setSavings] = useState('');
+    const [nonessentials, setNonessentials] = useState('');
 
     const [essentialsShare, setEssentialsShare] = useState(0);
     const [savingsShare, setSavingsShare] = useState(0);
@@ -27,7 +27,9 @@ export default function Home() {
     const [token, setToken] = useState('');
     const [error, setError] = useState(false);
     const [data, setData] = useState('');
-    const [authUserID, setAuthUserId] = useState('');
+    const [timer, setTimer] = useState('');
+
+    setTimeout(() => setTimer(1), 6000)
 
     function parseInteger(int) {
         //console.log(int);
@@ -40,19 +42,11 @@ export default function Home() {
         }
     }
 
-    const logOut = () => {
-        signOut(auth).then(() => {
-            // Sign-out successful.
-        }).catch((error) => {
-            // An error happened.
-        });
-    }
-
     const getData = useCallback(async () => {
         if (!token) {
             return;
         }
-        const response = await fetch(`http://localhost:3000/api/expense/${authUserID}`, {
+        const response = await fetch(`http://localhost:3000/api/salary`, {
             headers: {
                 "authorization": token
             },
@@ -62,11 +56,11 @@ export default function Home() {
         console.log(result);
         const parsedResult = JSON.parse(result.result);
         //console.log("result",parsedResult[0].salary);
-        if (parsedResult[0].essentials) {
+        if (parsedResult && parsedResult[0].essentials) {
             setData(parsedResult[0].essentials)
         }
         setSalary(parsedResult[0].salary);
-    }, [authUserID, token]);
+    }, [token]);
 
 
     async function updateData(data) {
@@ -77,6 +71,7 @@ export default function Home() {
             });
             const result = await response.json();
             console.log("Success:", result);
+            window.location.href = '/addExpense'
         } else setError(true);
     }
 
@@ -128,7 +123,6 @@ export default function Home() {
         }
         authUser.getIdToken().then((val) => {
             setToken(val);
-            setAuthUserId(authUser.uid)
         });
         getData();
     }, [authUser, getData])
@@ -142,17 +136,40 @@ export default function Home() {
         window.location.href = '/addExpense';
     }
 
+    if (!timer) {
+        return (
+            <div className='flex justify-center h-full items-center text-center '>
+                <Image priority={true} className="emoji"
+                    width={100}
+                    height={100}
+                    alt="sry"
+                    src="https://media.tenor.com/UnFx-k_lSckAAAAC/amalie-steiness.gif" />
+            </div>
+        )
+    }
+
+
+    if (!salary) {
+        return (
+            <main className="flex items-center justify-center h-screen">
+                <div>
+                    <div>Salary is not entered</div>
+                    <Link href="/">
+                        <button className='py-2 underline w-full text-indigo-700 rounded-md'>&#9664;  Go to salary page   </button>
+                    </Link>
+                </div>
+
+            </main >
+        )
+    }
+
     return (
         <main className="flex justify-center">
             <div className="flex min-h-screen flex-col max-w-xl justify-center px-6 pt-8 pb-4" >
                 <div className=" absolute  top-0 left-0 max-w-xl  text-2xl  pt-6 pl-6">
                     Budgetry
                 </div>
-                <Link href="/">
-                    <div onClick={logOut} className="w-20 absolute text-center top-0 right-0 mt-6 mr-6 bg-indigo-600 rounded-md">
-                        Logout
-                    </div>
-                </Link>
+
                 <div className=" text-xl font-semibold  mb-2  w-100">
                     Set your monthly goal
                 </div>
@@ -184,12 +201,8 @@ export default function Home() {
                 {error && <div className="text-red-600 font-bold mb-8">Enter the values correctly</div>}
                 {!error && <div className="text-transparent font-bold mb-8">Enter the values correctly</div>}
 
-                <Link href="/addExpense">
-                    <button onClick={() => updateData({ "id": authUserID, "essentials": essentialsShare, "savings": savingsShare, "non_essentials": nonessentialsShare })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
-                </Link>
-
+                <button onClick={() => updateData({ "essentials": essentialsShare, "savings": savingsShare, "non_essentials": nonessentialsShare })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
             </div>
         </main>
-
     )
 }

@@ -2,28 +2,47 @@
 
 import useFirebaseAuthentication from "@/hooks/useFirebaseAuthentication";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 
-export default function Home() {
+export default function Home({ params }) {
 
     const [note, setNote] = useState('');
     const [amount, setAmount] = useState('');
-    const [need, setNeed] = useState(null);
+    const [need, setNeed] = useState('');
     const [token, setToken] = useState('');
-    const [createdAt, setCreatedAt] = useState('');
-    const [updatedAt, setUpdatedAt] = useState('');
     const authUser = useFirebaseAuthentication();
+    const id = params.id;
 
 
+    const getData = useCallback(async () => {
+        if (!token) {
+            return;
+        }
+        const response = await fetch(`http://localhost:3000/api/editExpense?id=${id}&`, {
+            headers: {
+                "authorization": token
+            },
+            method: "GET",
+        });
+        const result = await response.json();
+        console.log(result);
+        const parsedResult = JSON.parse(result.result);
 
-    async function postData(data) {
-        if (note && need) {
-            const response = await fetch("http://localhost:3000/api/addExpense", {
+        if (parsedResult[0] && parsedResult[0].amount) {
+            setNote(parsedResult[0].note);
+            setAmount(parsedResult[0].amount);
+            setNeed(parsedResult[0].need);
+        }
+    }, [id, token]);
+
+    async function updateData(data) {
+        if (note && need && amount) {
+            const response = await fetch(`http://localhost:3000/api/editExpense?id=${id}&`, {
                 headers: {
                     "authorization": token
                 },
-                method: "POST",
+                method: "PUT",
                 body: JSON.stringify(data),
             });
             const result = await response.json();
@@ -34,6 +53,13 @@ export default function Home() {
         }
     }
 
+    async function deleteData() {
+        const response = await fetch(`http://localhost:3000/api/editExpense?id=${id}&`, {
+            method: "DELETE",
+        });
+        const result = await response.json();
+        console.log("Success:", result);
+    }
 
     useEffect(() => {
         if (!authUser) {
@@ -41,32 +67,22 @@ export default function Home() {
         }
         authUser.getIdToken().then((val) => {
             setToken(val);
-            firstDayOfMonth();
-            currentDayOfMonth();
         })
     }, [authUser])
 
+    useEffect(() => {
+        getData();
+    }, [getData])
 
-    function firstDayOfMonth() {
-        const currentDate = new Date(); // Current date and time
-        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
-        setCreatedAt(firstDayOfMonth);
-        console.log(firstDayOfMonth);
-    }
 
-    function currentDayOfMonth() {
-        const currentDate = new Date(); // Current date and time
-        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
-        setUpdatedAt(currentDayOfMonth);
-        console.log(currentDayOfMonth);
-    }
+
 
     return (
-        <main className="flex   justify-center">
+        <main className="flex justify-center">
             <div className="flex min-h-screen flex-col min-w-[45%] px-6 pt-20 pb-4" >
 
                 <div className="flex w-full justify-between pb-14">
-                    <div className="-ml-6 text-2xl ">New Expense</div>
+                    <div className="-ml-6 text-2xl ">Edit Expense</div>
                     <Link href="/dashboard">
                         <div className="w-8  border-2 border-gray-200  cursor-pointer  text-center rounded-md"> x</div>
                     </Link>
@@ -83,17 +99,17 @@ export default function Home() {
                 </div>
 
                 <div className=" mb-2 pt-4  text-sm">Need</div>
-                <div className="flex " onChange={(e) => { setNeed(e.target.value) }} >
-                    <select className="text-white bg-transparent border-2 border-[#E3EBFD] text-base p-3 font-medium grow rounded-md">
+                <div className="flex ">
+                    <select onChange={(e) => { setNeed(e.target.value) }} value={need} className="text-white bg-transparent border-2 border-[#E3EBFD] text-base p-3 font-medium grow rounded-md">
                         <option className="text-white bg-black" value="">--Please choose an option--</option>
                         <option className="text-white bg-black" value="Non Essentials" >Non Essentials</option>
                         <option className="text-white bg-black" value="Essentials" >Essentials</option>
                     </select>
                 </div>
 
-
-                <div className="flex flex-col grow justify-end mb-6" >
-                    <button onClick={() => postData({ "need": need, "note": note, "amount": amount, "createdAt": createdAt, "updatedAt": updatedAt })} className='py-2 bg-indigo-600 justify-end rounded-md'>Add </button>
+                <div className="flex flex-col grow justify-end" >
+                    <button onClick={() => deleteData({ "need": need, "note": note, "amount": amount })} className='py-2 bg-red-500 justify-end rounded-md mb-4'>Delete </button>
+                    <button onClick={() => updateData({ "need": need, "note": note, "amount": amount })} className='py-2 bg-green-600 justify-end rounded-md'>Update </button>
                 </div>
 
             </div>

@@ -43,5 +43,5 @@ export async function POST(request) {
     } catch (error) {
         console.error('Request error', error)
     }
-    return NextResponse.json({ "hello": "tags POST api" })
+    return NextResponse.json({ "hello": "addExpense POST api" })
 }

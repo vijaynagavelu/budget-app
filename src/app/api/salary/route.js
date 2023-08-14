@@ -1,22 +1,33 @@
 import { PrismaClient } from '@prisma/client'
 import { NextResponse } from 'next/server'
+import { verifyFirebaseIdToken } from '@/utils/getFirebaseId';
+
 
 const prisma = new PrismaClient()
 
-export async function GET() {
-    const users = await prisma.User.findMany()
+
+export async function GET(request) {
+    const prisma = new PrismaClient()
+    const currentUser = await verifyFirebaseIdToken(request);
+
+    const users = await prisma.User.findMany({
+        where: {
+            id: currentUser,
+        },
+    })
     const result = JSON.stringify(users);
-    return NextResponse.json({ result })
+    return NextResponse.json({ result });
 }
 
 
-export async function PUT(req) {
-    const data = await req.json();
-    console.log(data.id)
+export async function PUT(request) {
+    const currentUser = await verifyFirebaseIdToken(request);
+    const data = await request.json();
+
     try {
         const updateUsers = await prisma.User.update({
             where: {
-                id: data.id,
+                id: currentUser,
             },
             data: {
                 essentials: data.essentials,
@@ -32,13 +43,16 @@ export async function PUT(req) {
 }
 
 
-export async function POST(req) {
-    const data = await req.json();
-    console.log("data.id", data.id);
+export async function POST(request) {
+
+    const currentUser = await verifyFirebaseIdToken(request);
+
+    const data = await request.json();
+
     try {
         const newEntry = await prisma.User.create({
             data: {
-                id: data.id,
+                id: currentUser,
                 email: data.email,
                 name: data.name,
                 salary: data.salary

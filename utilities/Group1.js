@@ -1,15 +1,18 @@
 export function Group1({ color, title, amount, percentage, setPercentage }) {
+
     return (
-        <div className="flex flex-row  items-center mb-4 justify-between ">
-            <div className="flex flex-row items-center gap-8 ">
-                <div className={`w-8 h-8  ${color} rounded`}>
+        <div className="flex items-center mb-4 justify-between">
+            <div className="flex  items-center gap-2">
+                <div className={`flex w-8 h-8  ${color} rounded`}>
+                </div>
+                <div className="flex w-8 h-8">
                 </div>
 
-                <div className=" flex flex-col gap-0  ">
-                    <div className=" text-lg font-semibold  -mb-1  w-100">
+                <div className=" flex flex-col mr-4">
+                    <div className=" text-lg font-semibold  -mb-1 ">
                         {title}
                     </div>
-                    <div className=" text-base font-light w-100">
+                    <div className=" text-base font-light">
                         {amount}
                     </div>
                 </div>
@@ -17,7 +20,9 @@ export function Group1({ color, title, amount, percentage, setPercentage }) {
 
             <input onChange={(e) => {
                 setPercentage(e.target.value);
-            }} className="w-20 h-10 text-m text-black font-semibold rounded" placeholder="0" type="number" value={percentage} name="quantity" min={0} step={10} max={100}></input>
+            }} className="piechartInput w-20 h-10 text-m text-black font-semibold rounded" placeholder="0" type="number" value={percentage} name="quantity" min={0} step={10} max={100}>
+            </input>
         </div >
     )
-} 
+}
+
