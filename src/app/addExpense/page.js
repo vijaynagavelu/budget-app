@@ -2,23 +2,33 @@
 
 import useFirebaseAuthentication from "@/hooks/useFirebaseAuthentication";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 
 export default function Home() {
 
     const [note, setNote] = useState('');
     const [amount, setAmount] = useState('');
-    const [need, setNeed] = useState(null);
+    const [need, setNeed] = useState('');
     const [token, setToken] = useState('');
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
+    const [isUpdated, setIsUpdated] = useState(false);
+    const [realTime, setRealTime] = useState('');
+
+    const [error, setError] = useState(false);
     const authUser = useFirebaseAuthentication();
 
+    const handleUpdate = () => {
+        setIsUpdated(true);
 
+        setTimeout(() => {
+            setIsUpdated(false);
+        }, 2000);
+    };
 
-    async function postData(data) {
-        if (note && need) {
+    const postData = useCallback(async (data) => {
+        if (note && amount && need && token) {
             const response = await fetch("http://localhost:3000/api/addExpense", {
                 headers: {
                     "authorization": token
@@ -31,9 +41,20 @@ export default function Home() {
             setAmount("");
             setNote("");
             setNote("");
-        }
-    }
+            handleUpdate();
+            setError(false)
+        } else setError(true)
+    }, [amount, need, note, token]);
 
+    const check = useCallback(async () => {
+        if (note && amount && need) {
+            setError(false);
+        }
+    }, [amount, need, note])
+
+    useEffect(() => {
+        check()
+    }, [check])
 
     useEffect(() => {
         if (!authUser) {
@@ -43,23 +64,35 @@ export default function Home() {
             setToken(val);
             firstDayOfMonth();
             currentDayOfMonth();
+            currentTime();
         })
     }, [authUser])
+
+
+
 
 
     function firstDayOfMonth() {
         const currentDate = new Date(); // Current date and time
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
+        // firstDayOfMonth.setHours(-18, -30, 0, 0)
         setCreatedAt(firstDayOfMonth);
-        console.log(firstDayOfMonth);
+        console.log("firstDayOfMonth:", firstDayOfMonth);
     }
 
     function currentDayOfMonth() {
         const currentDate = new Date(); // Current date and time
-        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
-        setUpdatedAt(currentDayOfMonth);
-        console.log(currentDayOfMonth);
+        //const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+        //currentDayOfMonth.setHours(currentDate.getHours() - 18, currentDate.getMinutes() - 30, currentDate.getSeconds(), currentDate.getMilliseconds())
+        setUpdatedAt(currentDate);
+        console.log("currentDayOfMonth:");
     }
+
+    function currentTime() {
+        const currentDate = new Date(); // Current date and time
+        setRealTime(currentDate);
+    }
+
 
     return (
         <main className="flex   justify-center">
@@ -74,16 +107,16 @@ export default function Home() {
 
                 <div className=" mb-2 pt-10  text-sm">What did you spend on?</div>
                 <div className="flex mb-0 h-10">
-                    <input type="text" onChange={(e) => { setNote(e.target.value) }} className='text-white grow bg-transparent border-2 border-[#E3EBFD] rounded-md text-base  font-semibold p-3' placeholder="" value={note} ></input>
+                    <input type="text" onChange={(e) => { setNote(e.target.value); check() }} className='text-white grow bg-transparent border-2 border-[#E3EBFD] rounded-md text-base  font-semibold p-3' placeholder="" value={note} ></input>
                 </div>
 
                 <div className=" mb-2 pt-4  text-sm">Amount</div>
                 <div className="flex h-10">
-                    <input type="number" onChange={(e) => { setAmount(e.target.value) }} className='text-white specialInput grow bg-transparent border-2 border-[#E3EBFD] rounded-md text-base  font-semibold p-3' placeholder="" value={amount} ></input>
+                    <input type="number" onChange={(e) => { setAmount(e.target.value); check() }} className='text-white specialInput grow bg-transparent border-2 border-[#E3EBFD] rounded-md text-base  font-semibold p-3' placeholder="" value={amount} ></input>
                 </div>
 
                 <div className=" mb-2 pt-4  text-sm">Need</div>
-                <div className="flex " onChange={(e) => { setNeed(e.target.value) }} >
+                <div className="flex mb-2" onChange={(e) => { setNeed(e.target.value); check() }} >
                     <select className="text-white bg-transparent border-2 border-[#E3EBFD] text-base p-3 font-medium grow rounded-md">
                         <option className="text-white bg-black" value="">--Please choose an option--</option>
                         <option className="text-white bg-black" value="Non Essentials" >Non Essentials</option>
@@ -92,12 +125,23 @@ export default function Home() {
                 </div>
 
 
+                {error && <div className="text-red-600 font-bold mb-8">Fill all the values </div>}
+                {!error && <div className="text-transparent font-bold mb-8">Fill all the values </div>}
+
                 <div className="flex flex-col grow justify-end mb-6" >
-                    <button onClick={() => postData({ "need": need, "note": note, "amount": amount, "createdAt": createdAt, "updatedAt": updatedAt })} className='py-2 bg-indigo-600 justify-end rounded-md'>Add </button>
+                    <button
+                        onClick={() => postData({ "need": need, "note": note, "amount": amount, "createdAt": createdAt, "updatedAt": updatedAt })}
+                        className={`transition-colors duration-300 ${isUpdated
+                            ? 'bg-indigo-800 text-white transform scale-105'
+                            : 'bg-indigo-600 text-white-700'
+                            } hover:bg-indigo-800 hover:text-white px-4 py-2 rounded-md`}
+                    >
+                        {isUpdated ? 'Added ✔' : 'Add'}
+                    </button>
                 </div>
 
             </div>
-        </main>
+        </main >
 
     )
 }

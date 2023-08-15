@@ -50,6 +50,8 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
     const prisma = new PrismaClient()
+
+    const currentUser = await verifyFirebaseIdToken(request);
     const parsedParams = parseQueryString(request.url);
     const id = parseInt(parsedParams.id);
 

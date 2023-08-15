@@ -54,25 +54,6 @@ body {
   margin-top: 70px;
 }
 
-/* Assuming you have a container with class "custom-scrollbar" */
-.custom-scrollbar {
-  padding-right: 6px;
-  overflow: auto;
-  scroll-behavior: smooth;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 7px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #8888882f;
-  border-radius: 5px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
 
 .specialInput::-webkit-inner-spin-button,
 .specialInput::-webkit-outer-spin-button {

@@ -29,9 +29,8 @@ import Image from "next/image";
 
 /**
  * @todo
- * 1. Expense list descending sort
- * 2. Expense add form
- * 4. Date wise grouping
+ * 2.month change slary not change
+ * 3.time bug
  * */
 
 export default function Home() {
@@ -61,7 +60,7 @@ export default function Home() {
     const [timer, setTimer] = useState('');
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-    setTimeout(() => setTimer(1), 6000)
+    setTimeout(() => setTimer(1), 3000)
 
     const toggleDropdown = () => {
         setDropdownOpen(!isDropdownOpen);
@@ -150,7 +149,6 @@ export default function Home() {
         return monthNames[monthIndex];
     }
 
-
     {
         const getData = useCallback(async () => {
             if (!token) {
@@ -173,7 +171,7 @@ export default function Home() {
             if (!token) {
                 return;
             }
-            const response = await fetch(`http://localhost:3000/api/addExpense`, {
+            const response = await fetch(`http://localhost:3000/api/addExpense?date=${startDate}&`, {
                 headers: {
                     "authorization": token
                 },
@@ -190,7 +188,7 @@ export default function Home() {
                 setNonessentialsSpent(amount["Non Essentials"]);
             }
             setSpent(nonessentialsSpent + essentialsSpent)
-        }, [essentialsSpent, nonessentialsSpent, token]);
+        }, [essentialsSpent, nonessentialsSpent, startDate, token]);
 
         const getList = useCallback(async () => {
             if (!token) {
@@ -204,8 +202,9 @@ export default function Home() {
             });
             const result = await response.json();
             const parsedResult = JSON.parse(result.result);
-            setFilteredList(parsedResult);
-            console.log("FilteredList :", parsedResult);
+            const reversedList = parsedResult.reverse();
+            setFilteredList(reversedList);
+            console.log("FilteredList :", reversedList);
         }, [calendar, filter, startDate, token]);
 
         const budgetRatio = useCallback(() => {
@@ -245,8 +244,6 @@ export default function Home() {
         firstDayOfMonth(new Date());
     }, [])
 
-
-
     if (!timer) {
         return (
             <div className='flex justify-center h-full items-center text-center '>
@@ -275,7 +272,7 @@ export default function Home() {
     }
 
 
-    if (!filteredList.length) {
+    if (!filteredList) {
         return (
             <main className="flex justify-center">
                 <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
@@ -290,7 +287,6 @@ export default function Home() {
                                 </button>
                                 {isDropdownOpen && (
                                     <div className="absolute cursor-pointer text-white left-1  right-0 mt-2 border-l border-t border-l-gray-300  rounded-md">
-                                        {/* Dropdown content goes here */}
                                         <ul className="">
                                             <Link href="/addExpense">
                                                 <li className="hover:bg-gray-100 w-28 hover:text-black py-1 px-1 rounded-md">Add Expense</li>
@@ -392,6 +388,38 @@ export default function Home() {
         )
     }
 
+    const transactionsByDate = filteredList.reduce((acc, transaction) => {
+        const now = new Date(transaction.updatedAt)
+        console.log(now);
+        const date = new Date(transaction.updatedAt).toLocaleDateString();
+        if (!acc[date]) {
+            acc[date] = [];
+        }
+        acc[date].push(transaction);
+        return acc;
+    }, {});
+
+    function formatDate(date) {
+        const options = { day: 'numeric', month: 'short' };
+        return new Date(date).toLocaleDateString('en-US', options);
+    }
+
+    function getHeaderText(date) {
+        const currentDate = new Date();
+        const yesterday = new Date(currentDate);
+        yesterday.setDate(currentDate.getDate() - 1);
+
+        const parsedDate = new Date(date);
+        if (parsedDate.toDateString() === currentDate.toDateString()) {
+            return 'Today';
+        } else if (parsedDate.toDateString() === yesterday.toDateString()) {
+            return 'Yesterday';
+        } else {
+            return formatDate(date);
+        }
+    }
+
+
     return (
         <main className="flex justify-center">
             <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
@@ -472,6 +500,7 @@ export default function Home() {
                 </div>
 
 
+
                 <div className="footer">
                     <div className="flex  justify-between w-full pt-6">
                         <div className=" text-lg mb-2">Transactions </div>
@@ -496,20 +525,25 @@ export default function Home() {
 
                     <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
 
-                    <div className="text-sm px-2 mt-2 text-gray-400">Today </div>
 
-                    <div className=" h-56 w-full overflow-auto custom-scrollbar">
-                        {filteredList.map((item, i) => {
+                    <div className="list">
+                        {Object.entries(transactionsByDate).map(([date, transactions]) => {
+                            const headerText = getHeaderText(date);
                             return (
-                                <div key={i} className="flex justify-between items-center py-2">
-                                    {(item.need == "Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
-                                    {(item.need == "Non Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
-                                    <div className="basis-4/6">
-                                        <div className="text-base" >{item.note}</div>
-                                        <div className="text-xs text-gray-400">{item.need} </div>
-                                    </div>
-                                    <div onClick={() => { toEditPage(item.id) }} className="pr-2 cursor-pointer">🖉</div>
-                                    <div className="text-sm text-right basis-2/6">-₹{item.amount}.00</div>
+                                <div key={date} className="date-group">
+                                    <div className="text-sm  mt-2 text-gray-400">{headerText} </div>
+                                    {transactions.map((transaction, index) => (
+                                        <div key={index} className="flex justify-between items-center py-2">
+                                            {(transaction.need == "Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
+                                            {(transaction.need == "Non Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
+                                            <div className="basis-4/6">
+                                                <div className="text-base" >{transaction.note}</div>
+                                                <div className="text-xs text-gray-400">{transaction.need} </div>
+                                            </div>
+                                            <div onClick={() => { toEditPage(transaction.id) }} className="pr-2 cursor-pointer">🖉</div>
+                                            <div className="text-sm text-right basis-2/6">-₹{transaction.amount}.00</div>
+                                        </div>
+                                    ))}
                                 </div>
                             )
                         })}

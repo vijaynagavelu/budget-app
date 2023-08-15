@@ -37,6 +37,7 @@ export async function POST(request) {
                 amount: parseInt(data.amount),
                 createdAt: data.createdAt,
                 updatedAt: data.updatedAt,
+                time: data.time,
             }
         })
         console.log(newEntry);
