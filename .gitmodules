@@ -1,3 +1,3 @@
-[submodule "budget-app/nextjs-starter"]
-    path = budget-app/nextjs-starter
+[submodule "nextjs-starter"]
+    path = nextjs-starter
   url = https://github.com/vijaynagavelu/nextjs-starter.git
