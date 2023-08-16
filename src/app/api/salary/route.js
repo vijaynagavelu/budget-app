@@ -3,12 +3,12 @@ import { NextResponse } from 'next/server'
 import { verifyFirebaseIdToken } from '@/utils/getFirebaseId';
 
 
-const prisma = new PrismaClient()
 
 
 export async function GET(request) {
     const prisma = new PrismaClient()
     const currentUser = await verifyFirebaseIdToken(request);
+    //console.log(currentUser);
 
     const users = await prisma.User.findMany({
         where: {
@@ -21,8 +21,11 @@ export async function GET(request) {
 
 
 export async function PUT(request) {
+    const prisma = new PrismaClient()
     const currentUser = await verifyFirebaseIdToken(request);
     const data = await request.json();
+
+    console.log("currentUser", currentUser);
 
     try {
         const updateUsers = await prisma.User.update({
@@ -36,6 +39,7 @@ export async function PUT(request) {
             }
         })
         console.log(updateUsers);
+        return NextResponse.json({ "hello": "salary PUT api" })
     } catch (error) {
         console.error('Request error', error)
     }
@@ -44,9 +48,8 @@ export async function PUT(request) {
 
 
 export async function POST(request) {
-
+    const prisma = new PrismaClient()
     const currentUser = await verifyFirebaseIdToken(request);
-
     const data = await request.json();
 
     try {

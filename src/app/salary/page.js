@@ -27,6 +27,7 @@ export default function Home() {
         });
         const result = await response.json();
         console.log("Success:", result);
+        window.location.href = '/pieChart';
     }
 
 
@@ -115,15 +116,9 @@ export default function Home() {
                         <input type="text" onChange={(e) => {
                             setInputSalary(e.target.value)
                         }} className='text-black  text-base p-1 font-semibold w-full' placeholder="0" value={parseInteger(inputSalary)}></input>
-
                     </div>
 
-                    {/* <Link href="/pieChart"> */}
-                    <Link href="/pieChart">
-                        <button onClick={() => postData({ "email": email, "name": name, "salary": inputSalary })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
-                    </Link>
-                    {/* <button onClick={() => response()} className='py-2 bg-green-600 w-full rounded-md'> get request</button> */}
-                    {/* <button onClick={() => resDelete()} className='py-2 bg-red-600 w-full rounded-md'> delete request</button> */}
+                    <button onClick={() => postData({ "email": email, "name": name, "salary": inputSalary })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
                 </div>
             </main >
         )

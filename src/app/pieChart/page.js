@@ -64,14 +64,20 @@ export default function Home() {
 
 
     async function updateData(data) {
+        if (!token) {
+            return;
+        }
         if ((parseInt(essentials) + parseInt(nonessentials) + parseInt(savings)) === 100) {
             const response = await fetch("http://localhost:3000/api/salary", {
+                headers: {
+                    "authorization": token
+                },
                 method: "PUT",
                 body: JSON.stringify(data),
             });
             const result = await response.json();
             console.log("Success:", result);
-            window.location.href = '/addExpense'
+            window.location.href = '/pieChart'
         } else setError(true);
     }
 

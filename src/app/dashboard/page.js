@@ -160,7 +160,7 @@ export default function Home() {
             });
             const result = await response.json();
             const parsedResult = JSON.parse(result.result);
-            // console.log("result", parsedResult[0]);
+            //console.log("result", parsedResult[0]);
             setEssentialsShare(parsedResult[0].essentials), setSavingsShare(parsedResult[0].savings), setNonessentialsShare(parsedResult[0].non_essentials)
             setSalary(parsedResult[0].salary);
         }, [token]);
@@ -397,8 +397,8 @@ export default function Home() {
         const now = new Date(transaction.updatedAt)
         now.setHours(now.getHours() - 5);
         now.setMinutes(now.getMinutes() - 30);
-        //console.log(now);
-        const date = new Date(transaction.updatedAt).toLocaleDateString();
+        console.log(now);
+        const date = new Date(now).toLocaleDateString();
         if (!acc[date]) {
             acc[date] = [];
         }

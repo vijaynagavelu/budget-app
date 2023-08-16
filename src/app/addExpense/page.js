@@ -82,8 +82,7 @@ export default function Home() {
 
     function currentDayOfMonth() {
         const currentDate = new Date(); // Current date and time
-        // const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 14);
+        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
         currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
         setUpdatedAt(currentDayOfMonth);
         console.log("currentDayOfMonth:");
