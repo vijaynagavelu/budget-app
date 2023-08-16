@@ -27,11 +27,7 @@ import Image from "next/image";
  * 13.input type number css global css find it
  *  */
 
-/**
- * @todo
- * 2.month change slary not change
- * 3.time bug
- * */
+
 
 export default function Home() {
 
@@ -73,6 +69,7 @@ export default function Home() {
             // An error happened.
         });
     }
+
 
     function toEditPage(id) {
         window.location.href = `/editExpense/${id}`;
@@ -149,6 +146,7 @@ export default function Home() {
         return monthNames[monthIndex];
     }
 
+
     {
         const getData = useCallback(async () => {
             if (!token) {
@@ -181,11 +179,18 @@ export default function Home() {
             const parsedResult = JSON.parse(result.result);
             //console.log("result getAmount ", parsedResult);
             const amount = SimplifyDateFunction(parsedResult);
-            if (amount && amount.Essentials) {
-                setEssentialsSpent(amount.Essentials);
-            }
-            if (amount && amount["Non Essentials"]) {
-                setNonessentialsSpent(amount["Non Essentials"]);
+            if (amount) {
+                if (amount.Essentials) {
+                    setEssentialsSpent(amount.Essentials);
+                } else {
+                    setEssentialsSpent(0); // Set to zero if Essentials property is not present
+                }
+
+                if (amount["Non Essentials"]) {
+                    setNonessentialsSpent(amount["Non Essentials"]);
+                } else {
+                    setNonessentialsSpent(0); // Set to zero if Non Essentials property is not present
+                }
             }
             setSpent(nonessentialsSpent + essentialsSpent)
         }, [essentialsSpent, nonessentialsSpent, startDate, token]);
@@ -272,7 +277,7 @@ export default function Home() {
     }
 
 
-    if (!filteredList) {
+    if (!filteredList.length) {
         return (
             <main className="flex justify-center">
                 <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
@@ -390,7 +395,9 @@ export default function Home() {
 
     const transactionsByDate = filteredList.reduce((acc, transaction) => {
         const now = new Date(transaction.updatedAt)
-        console.log(now);
+        now.setHours(now.getHours() - 5);
+        now.setMinutes(now.getMinutes() - 30);
+        //console.log(now);
         const date = new Date(transaction.updatedAt).toLocaleDateString();
         if (!acc[date]) {
             acc[date] = [];
@@ -418,7 +425,6 @@ export default function Home() {
             return formatDate(date);
         }
     }
-
 
     return (
         <main className="flex justify-center">

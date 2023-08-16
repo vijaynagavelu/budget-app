@@ -1,18 +1,37 @@
 import { PrismaClient } from '@prisma/client'
 import { NextResponse } from 'next/server'
 import { verifyFirebaseIdToken } from '@/utils/getFirebaseId';
-
+import { parseQueryString } from '../../../utils/queryString'
 
 const prisma = new PrismaClient()
 
 
 export async function GET(request) {
     const currentUser = await verifyFirebaseIdToken(request);
+    const parsedParams = parseQueryString(request.url);
+
+    const startDate = new Date(processInputString(parsedParams.date));
+    const endDate = getNextMonthFirstDay(new Date(processInputString(parsedParams.date)));
+
+    function processInputString(inputString) {
+        return inputString.replace(/%20/g, ' ');
+    }
+
+    function getNextMonthFirstDay(date) {
+        if (!date) {
+            return null;
+        }
+        return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    }
 
     const needValues = await prisma.Expense.groupBy({
         by: ["need"],
         where: {
             user_id: currentUser,
+            createdAt: {
+                gte: startDate,
+                lte: endDate
+            },
         },
         _sum: {
             amount: true,

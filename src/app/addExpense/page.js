@@ -82,9 +82,10 @@ export default function Home() {
 
     function currentDayOfMonth() {
         const currentDate = new Date(); // Current date and time
-        //const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-        //currentDayOfMonth.setHours(currentDate.getHours() - 18, currentDate.getMinutes() - 30, currentDate.getSeconds(), currentDate.getMilliseconds())
-        setUpdatedAt(currentDate);
+        // const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 14);
+        currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
+        setUpdatedAt(currentDayOfMonth);
         console.log("currentDayOfMonth:");
     }
 
@@ -95,8 +96,8 @@ export default function Home() {
 
 
     return (
-        <main className="flex   justify-center">
-            <div className="flex min-h-screen flex-col min-w-[45%] px-6 pt-20 pb-4" >
+        <main className="flex justify-center">
+            <div className="flex min-h-screen flex-col w-full max-w-lg px-10 pt-20 pb-4" >
 
                 <div className="flex w-full justify-between pb-14">
                     <div className="-ml-6 text-2xl ">New Expense</div>

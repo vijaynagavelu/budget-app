@@ -127,7 +127,7 @@ export default function Home({ params }) {
 
     return (
         <main className="flex justify-center">
-            <div className="flex min-h-screen flex-col min-w-[45%] px-6 pt-20 pb-4" >
+            <div className="flex min-h-screen flex-col w-full max-w-lg px-10 pt-20 pb-4" >
 
                 <div className="flex w-full justify-between pb-14">
                     <div className="-ml-6 text-2xl ">Edit Expense</div>
