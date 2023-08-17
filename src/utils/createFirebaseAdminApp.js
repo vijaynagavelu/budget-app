@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import serviceAccount from "./serviceAccountKey.json" assert {type: 'json'};
+// import serviceAccount from "./serviceAccountKey.json";
 
 export function createFirebaseAdminApp() {
 
@@ -10,6 +10,6 @@ export function createFirebaseAdminApp() {
 
   // initialize admin app
   return admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(env("SERVICE")),
   });
 }
