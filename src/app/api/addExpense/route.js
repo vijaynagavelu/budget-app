@@ -11,8 +11,8 @@ export async function GET(request) {
     const parsedParams = parseQueryString(request.url);
 
     const testDate = new Date()
-    const startDate = new Date(processInputString(parsedParams.date));
-    const endDate = getNextMonthFirstDay(new Date(processInputString(parsedParams.date)));
+    const startDate = new Date((parsedParams.date));
+    const endDate = getNextMonthFirstDay(new Date(parsedParams.date));
 
     function processInputString(inputString) {
         return inputString.replace(/%20/g, ' ');

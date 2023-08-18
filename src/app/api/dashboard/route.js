@@ -10,13 +10,13 @@ export async function GET(request) {
     const currentUser = await verifyFirebaseIdToken(request);
     const parsedParams = parseQueryString(request.url);
 
-    const singleDay = processInputString(parsedParams.singleDate)
-    const tag = processInputString(parsedParams.tag);
-    const startDate = new Date(processInputString(parsedParams.date));
-    const endDate = getNextMonthFirstDay(new Date(processInputString(parsedParams.date)));
+    const singleDay = (parsedParams.singleDate)
+    const tag = (parsedParams.tag);
+    const startDate = new Date((parsedParams.date));
+    const endDate = getNextMonthFirstDay(new Date((parsedParams.date)));
 
-    const todayStartDate = new Date(processInputStringClone(parsedParams.singleDate));
-    const todayEndDate = getFirstDayOfFollowingMonth(new Date(processInputString(parsedParams.singleDate)));
+    const todayStartDate = new Date((parsedParams.singleDate));
+    const todayEndDate = getFirstDayOfFollowingMonth(new Date(parsedParams.singleDate));
 
 
     function processInputString(inputString) {
