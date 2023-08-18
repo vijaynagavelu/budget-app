@@ -77,7 +77,7 @@ export default function Home() {
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
         // firstDayOfMonth.setHours(-18, -30, 0, 0)
         setCreatedAt(firstDayOfMonth);
-        console.log("firstDayOfMonth:", firstDayOfMonth);
+        console.log("firstDayOfMonth :", firstDayOfMonth);
     }
 
     function currentDayOfMonth() {
