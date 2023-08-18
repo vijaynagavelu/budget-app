@@ -23,7 +23,6 @@ export default function Home() {
         signInWithPopup(auth, provider).then((data) => {
             console.log(data.user)
         })
-        window.location.href = '/salary';
     }
 
     const fetchData = useCallback(async () => {
