@@ -1,6 +1,6 @@
 
 export function parseQueryString(queryString) {
-    queryString = decodeURI(queryString)
+    queryString = decodeURIComponent(queryString)
     // Split the input query string into individual parameters
     const paramPairs = queryString.split("?")[1].split("&");
 
