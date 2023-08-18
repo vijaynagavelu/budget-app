@@ -24,22 +24,38 @@ export async function GET(request) {
         return new Date(date.getFullYear(), date.getMonth() + 1, 1);
     }
 
-    const needValues = await prisma.Expense.groupBy({
-        by: ["need"],
-        where: {
-            user_id: currentUser,
-            createdAt: {
-                gte: startDate,
-                lte: endDate
+    console.info({
+        url: request.url,
+        parsedParams,
+        startDate,
+        endDate
+    })
+
+    try {
+        const needValues = await prisma.Expense.groupBy({
+            by: ["need"],
+            where: {
+                user_id: currentUser,
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                },
             },
-        },
-        _sum: {
-            amount: true,
-        },
-    });
-    const result = JSON.stringify(needValues);
-    //console.log(result);
-    return NextResponse.json({ result })
+            _sum: {
+                amount: true,
+            },
+        });
+        const result = JSON.stringify(needValues);
+        //console.log(result);
+        return NextResponse.json({ result })
+    } catch (e) {
+        return NextResponse.json({
+            url: request.url,
+            parsedParams,
+            startDate,
+            endDate
+        })
+    }
 }
 
 

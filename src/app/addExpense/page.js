@@ -14,7 +14,6 @@ export default function Home() {
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
     const [isUpdated, setIsUpdated] = useState(false);
-    const [realTime, setRealTime] = useState('');
 
     const [error, setError] = useState(false);
     const authUser = useFirebaseAuthentication();
@@ -64,7 +63,6 @@ export default function Home() {
             setToken(val);
             firstDayOfMonth();
             currentDayOfMonth();
-            currentTime();
         })
     }, [authUser])
 
@@ -84,11 +82,6 @@ export default function Home() {
         const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
         currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
         setUpdatedAt(currentDayOfMonth);
-    }
-
-    function currentTime() {
-        const currentDate = new Date(); // Current date and time
-        setRealTime(currentDate);
     }
 
 

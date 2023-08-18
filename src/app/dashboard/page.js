@@ -162,7 +162,6 @@ export default function Home() {
 
                 const result = await response.json();
                 const parsedResult = JSON.parse(result.result);
-
                 setEssentialsShare(parsedResult[0].essentials);
                 setSavingsShare(parsedResult[0].savings);
                 setNonessentialsShare(parsedResult[0].non_essentials);
