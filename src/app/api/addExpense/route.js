@@ -25,7 +25,7 @@ export async function GET(request) {
         return new Date(date.getFullYear(), date.getMonth() + 1, 1);
     }
 
-    console.info({
+    const logInfo = ({
         url: request.url,
         parsedParams,
         startDate,
@@ -33,6 +33,7 @@ export async function GET(request) {
         testDate,
         processInputString: processInputString(parsedParams.date)
     })
+    console.info(logInfo)
 
     try {
         const needValues = await prisma.Expense.groupBy({
@@ -52,12 +53,7 @@ export async function GET(request) {
         //console.log(result);
         return NextResponse.json({ result })
     } catch (e) {
-        return NextResponse.json({
-            url: request.url,
-            parsedParams,
-            startDate,
-            endDate
-        })
+        return NextResponse.json(logInfo)
     }
 }
 
