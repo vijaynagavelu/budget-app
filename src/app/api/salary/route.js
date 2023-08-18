@@ -2,21 +2,36 @@ import { PrismaClient } from '@prisma/client'
 import { NextResponse } from 'next/server'
 import { verifyFirebaseIdToken } from '@/utils/getFirebaseId';
 
+// export async function GET(request) {
+//     const prisma = new PrismaClient()
+//     const currentUser = await verifyFirebaseIdToken(request);
+//     //console.log(currentUser);
 
-
+//     const users = await prisma.User.findMany({
+//         where: {
+//             id: currentUser,
+//         },
+//     })
+//     const result = JSON.stringify(users);
+//     return NextResponse.json({ result });
+// }
 
 export async function GET(request) {
-    const prisma = new PrismaClient()
-    const currentUser = await verifyFirebaseIdToken(request);
-    //console.log(currentUser);
+    try {
+        const prisma = new PrismaClient();
+        const currentUser = await verifyFirebaseIdToken(request);
 
-    const users = await prisma.User.findMany({
-        where: {
-            id: currentUser,
-        },
-    })
-    const result = JSON.stringify(users);
-    return NextResponse.json({ result });
+        const users = await prisma.user.findMany({
+            where: {
+                id: currentUser,
+            },
+        });
+        const result = JSON.stringify(users);
+        return NextResponse.json({ result });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return NextResponse.json({ error: 'Internal Server Error' });
+    }
 }
 
 

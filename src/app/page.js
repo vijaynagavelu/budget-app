@@ -31,7 +31,6 @@ export default function Home() {
         }
         try {
             const response = await fetch(`http://localhost:3000/api/salary`, {
-                mode: 'no-cors',
                 headers: {
                     "authorization": token
                 },
@@ -58,8 +57,6 @@ export default function Home() {
         })
         fetchData();
     }, [authUser, fetchData])
-
-    console.log("Hai");
 
     return (
         <main className="flex h-full justify-center">
