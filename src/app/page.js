@@ -58,7 +58,6 @@ export default function Home() {
         fetchData();
     }, [authUser, fetchData])
 
-    console.log(process.env.BASE_URL);
 
     return (
         <main className="flex h-full justify-center">

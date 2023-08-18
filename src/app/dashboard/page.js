@@ -10,24 +10,6 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Image from "next/image";
 
-/**
- * @todo
- * 1. Expense list descending sort
- * 2. Month picker top nav sticky
- * 3. All page navigation
- * 4. Expense add form, amount remove arrows
- * 5. API router put in proper folder names
- * 6. Date wise grouping
- * 7. Logout button
- * 8. Update and delete expense
- * 9. pieChart page error -  Cannot read properties of undefined (reading 'essentials')
- * 10. Check the total percantage to be exactly 100% in budget screen
- * 11. Cannot read properties of undefined (reading 'toLocaleString') // dashboard page
- * 12. pick date
- * 13.input type number css global css find it
- *  */
-
-
 
 export default function Home() {
 
@@ -53,10 +35,8 @@ export default function Home() {
     const [degA, setDegA] = useState(120);
     const [degB, setDegB] = useState(140);
     const [degC, setDegC] = useState(0);
-    const [timer, setTimer] = useState('');
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-    setTimeout(() => setTimer(1), 3000)
 
     const toggleDropdown = () => {
         setDropdownOpen(!isDropdownOpen);
@@ -69,7 +49,6 @@ export default function Home() {
             // An error happened.
         });
     }
-
 
     function toEditPage(id) {
         window.location.href = `/editExpense/${id}`;
@@ -249,7 +228,7 @@ export default function Home() {
         firstDayOfMonth(new Date());
     }, [])
 
-    if (!timer) {
+    if (!filteredList) {
         return (
             <div className='flex justify-center h-full items-center text-center '>
                 <Image priority={true} className="emoji"
@@ -504,7 +483,6 @@ export default function Home() {
                     <div className="mt-8 m-auto w-40 border-b border-b-gray-400"></div>
 
                 </div>
-
 
 
                 <div className="footer">
