@@ -12,10 +12,10 @@ export async function GET(request) {
 
     const singleDay = (parsedParams.singleDate)
     const tag = (parsedParams.tag);
-    const startDate = new Date((parsedParams.date));
-    const endDate = getNextMonthFirstDay(new Date((parsedParams.date)));
+    const startDate = new Date(parsedParams.date);
+    const endDate = getNextMonthFirstDay(new Date(parsedParams.date));
 
-    const todayStartDate = new Date((parsedParams.singleDate));
+    const todayStartDate = new Date(parsedParams.singleDate);
     const todayEndDate = getFirstDayOfFollowingMonth(new Date(parsedParams.singleDate));
 
 
