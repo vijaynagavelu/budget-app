@@ -30,7 +30,7 @@ export default function Home() {
             return;
         }
         try {
-            const response = await fetch(`${process.env.BASE_URL}/api/salary`, {
+            const response = await fetch(`/api/salary`, {
                 headers: {
                     "authorization": token
                 },
@@ -57,6 +57,8 @@ export default function Home() {
         })
         fetchData();
     }, [authUser, fetchData])
+
+    console.log(process.env.BASE_URL);
 
     return (
         <main className="flex h-full justify-center">

@@ -38,7 +38,7 @@ export default function Home({ params }) {
         if (!token) {
             return;
         }
-        const response = await fetch(`${process.env.BASE_URL}/api/editExpense?id=${id}&`, {
+        const response = await fetch(`/api/editExpense?id=${id}&`, {
             headers: {
                 "authorization": token
             },
@@ -57,7 +57,7 @@ export default function Home({ params }) {
 
     const updateData = useCallback(async (data) => {
         if (note && amount && need) {
-            const response = await fetch(`${process.env.BASE_URL}/api/editExpense?id=${id}&`, {
+            const response = await fetch(`/api/editExpense?id=${id}&`, {
                 headers: {
                     "authorization": token
                 },
@@ -83,7 +83,7 @@ export default function Home({ params }) {
 
 
     async function deleteData() {
-        const response = await fetch(`${process.env.BASE_URL}/api/editExpense?id=${id}&`, {
+        const response = await fetch(`/api/editExpense?id=${id}&`, {
             headers: {
                 "authorization": token
             },

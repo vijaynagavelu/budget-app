@@ -29,7 +29,7 @@ export default function Home() {
 
     const postData = useCallback(async (data) => {
         if (note && amount && need && token) {
-            const response = await fetch(`${process.env.BASE_URL}/api/addExpense`, {
+            const response = await fetch(`/api/addExpense`, {
                 headers: {
                     "authorization": token
                 },
@@ -75,9 +75,8 @@ export default function Home() {
     function firstDayOfMonth() {
         const currentDate = new Date(); // Current date and time
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
-        // firstDayOfMonth.setHours(-18, -30, 0, 0)
         setCreatedAt(firstDayOfMonth);
-        console.log("firstDayOfMonth :", firstDayOfMonth);
+        //console.log("firstDayOfMonth :", firstDayOfMonth);
     }
 
     function currentDayOfMonth() {
@@ -85,7 +84,6 @@ export default function Home() {
         const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
         currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
         setUpdatedAt(currentDayOfMonth);
-        console.log("currentDayOfMonth:");
     }
 
     function currentTime() {

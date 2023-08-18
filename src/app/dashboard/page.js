@@ -152,7 +152,7 @@ export default function Home() {
             if (!token) {
                 return;
             }
-            const response = await fetch(`${process.env.BASE_URL}/api/salary`, {
+            const response = await fetch(`/api/salary`, {
                 headers: {
                     "authorization": token
                 },
@@ -169,7 +169,7 @@ export default function Home() {
             if (!token) {
                 return;
             }
-            const response = await fetch(`${process.env.BASE_URL}/api/addExpense?date=${startDate}&`, {
+            const response = await fetch(`/api/addExpense?date=${startDate}&`, {
                 headers: {
                     "authorization": token
                 },
@@ -199,7 +199,7 @@ export default function Home() {
             if (!token) {
                 return;
             }
-            const response = await fetch(`${process.env.BASE_URL}/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
+            const response = await fetch(`/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
                 headers: {
                     "authorization": token
                 },
