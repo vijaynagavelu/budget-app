@@ -7,35 +7,20 @@ const prisma = new PrismaClient()
 
 
 export async function GET(request) {
-    const currentUser = await verifyFirebaseIdToken(request);
-    const parsedParams = parseQueryString(request.url);
-
-    const testDate = new Date()
-    const startDate = new Date((parsedParams.date));
-    const endDate = getNextMonthFirstDay(new Date(parsedParams.date));
-
-    function processInputString(inputString) {
-        return inputString.replace(/%20/g, ' ');
-    }
-
-    function getNextMonthFirstDay(date) {
-        if (!date) {
-            return null;
-        }
-        return new Date(date.getFullYear(), date.getMonth() + 1, 1);
-    }
-
-    const logInfo = ({
-        url: request.url,
-        parsedParams,
-        startDate,
-        endDate,
-        testDate,
-        processInputString: processInputString(parsedParams.date)
-    })
-    console.info(logInfo)
-
     try {
+        const currentUser = await verifyFirebaseIdToken(request);
+        const parsedParams = parseQueryString(request.url);
+
+        const startDate = new Date(parsedParams.date);
+        const endDate = getNextMonthFirstDay(new Date(parsedParams.date));
+
+        function getNextMonthFirstDay(date) {
+            if (!date) {
+                return null;
+            }
+            return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+        }
+
         const needValues = await prisma.Expense.groupBy({
             by: ["need"],
             where: {
@@ -49,14 +34,14 @@ export async function GET(request) {
                 amount: true,
             },
         });
+
         const result = JSON.stringify(needValues);
-        //console.log(result);
-        return NextResponse.json({ result })
-    } catch (e) {
-        return NextResponse.json(logInfo)
+        return NextResponse.json({ result }, { status: 200 });
+    } catch (error) {
+        console.error('Error:', error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
-
 
 
 export async function POST(request) {
@@ -71,12 +56,12 @@ export async function POST(request) {
                 amount: parseInt(data.amount),
                 createdAt: data.createdAt,
                 updatedAt: data.updatedAt,
-                time: data.time,
             }
-        })
-        console.log(newEntry);
+        });
+        console.log("New expense entry:", newEntry);
+        return NextResponse.json({ "message": "Expense entry created successfully" }, { status: 200 });
     } catch (error) {
-        console.error('Request error', error)
+        console.error('Error creating expense entry:', error);
+        return NextResponse.json({ 'error': "Internal Server Error" }, { status: 500 });
     }
-    return NextResponse.json({ "hello": "addExpense POST api" })
 }

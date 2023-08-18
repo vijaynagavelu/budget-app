@@ -10,47 +10,71 @@ export default function Home() {
     const [inputSalary, setInputSalary] = useState();
     const [email, setEmail] = useState('');
     const [salary, setSalary] = useState("");
-    const [timer, setTimer] = useState('');
+    const [timer, setTimer] = useState(0);
     const authUser = useFirebaseAuthentication();
 
 
-    setTimeout(() => setTimer(1), 6000)
+    setTimeout(() => setTimer(1), 3000)
 
-    async function postData(data) {
-        const response = await fetch(`/api/salary`, {
-            headers: {
-                "authorization": token
-            },
-            method: "POST",
-            body: JSON.stringify(data),
-        });
-        const result = await response.json();
-        console.log("Success:", result);
-        window.location.href = '/pieChart';
+    function parseInteger(int) {
+        if (int) {
+            let num = parseInt(int.replaceAll(',', ''));
+            return num.toLocaleString();
+        } else {
+            return "";
+        }
     }
 
+    async function postData(data) {
+        try {
+            const response = await fetch(`/api/salary`, {
+                headers: {
+                    "authorization": token,
+                    "Content-Type": "application/json"
+                },
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                console.error("Error posting data:", response.statusText);
+                return;
+            }
+            const result = await response.json();
+            console.log("Success:", result);
+            window.location.href = '/pieChart';
+        } catch (error) {
+            console.error("Error posting data:", error);
+        }
+    }
 
     const getData = useCallback(async () => {
         if (!token) {
             return;
         }
-        const response = await fetch(`/api/salary`, {
-            headers: {
-                "authorization": token
-            },
-            method: "GET",
-        });
-        const result = await response.json();
-        const parsedResult = JSON.parse(result.result);
-        console.log("parsedResult", parsedResult[0]);
-        if (parsedResult[0] && parsedResult[0].salary) {
-            setSalary(parsedResult[0].salary);
-        }
-        else {
-            console.log("No data");
+        try {
+            const response = await fetch(`/api/salary`, {
+                headers: {
+                    "authorization": token,
+                    "Content-Type": "application/json"
+                },
+                method: "GET",
+            });
+            if (!response.ok) {
+                console.error("Error fetching data:", response.statusText);
+                return;
+            }
+            const result = await response.json();
+            const parsedResult = JSON.parse(result.result);
+            //console.log(parsedResult)
+            if (parsedResult[0] && parsedResult[0].salary) {
+                setSalary(parsedResult[0].salary);
+            } else {
+                console.log("No data");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
         }
     }, [token]);
-
 
     useEffect(() => {
         if (!authUser) {
@@ -59,26 +83,15 @@ export default function Home() {
         authUser.getIdToken().then((val) => {
             setToken(val);
             setEmail(authUser.email);
-            console.log(authUser.email)
-            //console.log(val, authUser);
         })
         getData();
     }, [authUser, getData]);
 
-    function parseInteger(int) {
-        //console.log(int);
-        if (int) {
-            let num = int.replaceAll(',', '');
-            num = parseInt(num);
-            return num.toLocaleString();
-        } else {
-            return "";
+    useEffect(() => {
+        if (salary) {
+            window.location.href = '/pieChart';
         }
-    }
-
-    if (salary) {
-        window.location.href = '/pieChart';
-    }
+    }, [salary]);
 
 
     if (timer) {
@@ -133,13 +146,3 @@ export default function Home() {
         </div>
     )
 }
-
-
-
-    // async function resDelete() {
-    //     const response = await fetch("/api/expense", {
-    //         method: "DELETE",
-    //     });
-    //     const result = await response.json();
-    //     console.log("Success:", result);
-    // }

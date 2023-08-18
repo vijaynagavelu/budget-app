@@ -29,23 +29,27 @@ export default function Home() {
         if (!token) {
             return;
         }
+        console.log("Fetching data...");
         try {
             const response = await fetch(`/api/salary`, {
                 headers: {
-                    "authorization": token
+                    "authorization": token,
+                    "Content-Type": "application/json"
                 },
                 method: "GET",
             });
             if (!response.ok) {
-                throw new Error("Networkk error");
+                console.error("Error fetching data:", response.status, response.statusText);
+                return;
             }
             const result = await response.json();
             setAuthenticatedUser(result);
-            console.log(result);
+            //console.log(result);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     }, [token]);
+
 
     useEffect(() => {
         if (!authUser) {
@@ -53,7 +57,6 @@ export default function Home() {
         }
         authUser.getIdToken().then((val) => {
             setToken(val);
-            // console.log(val,authUser);
         })
         fetchData();
     }, [authUser, fetchData])

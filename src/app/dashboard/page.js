@@ -19,7 +19,6 @@ export default function Home() {
     const [filter, setFilter] = useState('All');
 
     const [startDate, setStartDate] = useState(new Date());
-
     const [calendar, setCalendar] = useState(null);
     const [showCalendar, setShowCalendar] = useState(false);
 
@@ -38,9 +37,6 @@ export default function Home() {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
 
-    const toggleDropdown = () => {
-        setDropdownOpen(!isDropdownOpen);
-    };
 
     const logOut = () => {
         signOut(auth).then(() => {
@@ -50,19 +46,10 @@ export default function Home() {
         });
     }
 
-    function toEditPage(id) {
-        window.location.href = `/editExpense/${id}`;
-        console.log(id);
-        console.log("editpage")
-    }
-
     function parseInteger(int) {
-        //console.log(int);
         if (int) {
-            let num = int.replaceAll(',', '');
-            num = parseInt(num);
+            let num = parseInt(int.replaceAll(',', ''));
             return num;
-            // return num.toLocaleString();
         } else {
             return "";
         }
@@ -93,7 +80,6 @@ export default function Home() {
         const lastDayOfMonth = new Date(year, month + 1, 0);
         const totalDaysInMonth = lastDayOfMonth.getDate();
         const remainingDays = totalDaysInMonth - today.getDate();
-
         if (remainingDays === 0) {
             return "Last day of the month!";
         } else if (remainingDays === 1) {
@@ -103,7 +89,7 @@ export default function Home() {
         }
     }
 
-    function SimplifyDateFunction(data) {
+    function SimplifyFetchedResult(data) {
         const consolidatedObject = data.reduce((result, item) => {
             result[item.need] = item._sum.amount;
             return result;
@@ -127,23 +113,6 @@ export default function Home() {
 
 
     {
-        // const getData = useCallback(async () => {
-        //     if (!token) {
-        //         return;
-        //     }
-        //     const response = await fetch(`/api/salary`, {
-        //         headers: {
-        //             "authorization": token
-        //         },
-        //         method: "GET",
-        //     });
-        //     const result = await response.json();
-        //     const parsedResult = JSON.parse(result.result);
-        //     //console.log("result", parsedResult[0]);
-        //     setEssentialsShare(parsedResult[0].essentials), setSavingsShare(parsedResult[0].savings), setNonessentialsShare(parsedResult[0].non_essentials)
-        //     setSalary(parsedResult[0].salary);
-        // }, [token]);
-
         const getData = useCallback(async () => {
             if (!token) {
                 return;
@@ -151,21 +120,28 @@ export default function Home() {
             try {
                 const response = await fetch(`/api/salary`, {
                     headers: {
-                        "authorization": token
+                        "authorization": token,
+                        "Content-Type": "application/json"
                     },
                     method: "GET",
                 });
-
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    console.error("Error fetching data:", response.status, response.statusText);
+                    return;
                 }
-
                 const result = await response.json();
                 const parsedResult = JSON.parse(result.result);
-                setEssentialsShare(parsedResult[0].essentials);
-                setSavingsShare(parsedResult[0].savings);
-                setNonessentialsShare(parsedResult[0].non_essentials);
-                setSalary(parsedResult[0].salary);
+
+                if (!parsedResult || !Array.isArray(parsedResult) || parsedResult.length === 0) {
+                    console.error("Error fetching data:", response.status, response.statusText);
+                    return;
+                }
+                //console.log(parsedResult)
+                const data = parsedResult[0];
+                setEssentialsShare(data.essentials);
+                setSavingsShare(data.savings);
+                setNonessentialsShare(data.non_essentials);
+                setSalary(data.salary);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -175,48 +151,32 @@ export default function Home() {
             if (!token) {
                 return;
             }
-            const response = await fetch(`/api/addExpense?date=${startDate}&`, {
-                headers: {
-                    "authorization": token
-                },
-                method: "GET",
-            });
-            const result = await response.json();
-            const parsedResult = JSON.parse(result.result);
-            //console.log("result getAmount ", parsedResult);
-            const amount = SimplifyDateFunction(parsedResult);
-            if (amount) {
-                if (amount.Essentials) {
-                    setEssentialsSpent(amount.Essentials);
-                } else {
-                    setEssentialsSpent(0); // Set to zero if Essentials property is not present
+            try {
+                const response = await fetch(`/api/addExpense?date=${startDate}&`, {
+                    headers: {
+                        "authorization": token,
+                        "Content-Type": "application/json"
+                    },
+                    method: "GET",
+                });
+                if (!response.ok) {
+                    console.error("Error fetching data:", response.status, response.statusText);
+                    return;
                 }
+                const result = await response.json();
+                const parsedResult = JSON.parse(result.result);
 
-                if (amount["Non Essentials"]) {
-                    setNonessentialsSpent(amount["Non Essentials"]);
-                } else {
-                    setNonessentialsSpent(0); // Set to zero if Non Essentials property is not present
-                }
+                const amount = SimplifyFetchedResult(parsedResult);
+                const essentialsSpent = amount?.Essentials || 0;
+                const nonessentialsSpent = amount?.["Non Essentials"] || 0;
+                setEssentialsSpent(essentialsSpent);
+                setNonessentialsSpent(nonessentialsSpent);
+                setSpent(essentialsSpent + nonessentialsSpent);
+            } catch (error) {
+                console.error('Error fetching or processing data:', error);
             }
-            setSpent(nonessentialsSpent + essentialsSpent)
-        }, [essentialsSpent, nonessentialsSpent, startDate, token]);
+        }, [startDate, token]);
 
-        // const getList = useCallback(async () => {
-        //     if (!token) {
-        //         return;
-        //     }
-        //     const response = await fetch(`/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
-        //         headers: {
-        //             "authorization": token
-        //         },
-        //         method: "GET",
-        //     });
-        //     const result = await response.json();
-        //     const parsedResult = JSON.parse(result.result);
-        //     const reversedList = parsedResult.reverse();
-        //     setFilteredList(reversedList);
-        //     console.log("FilteredList :", reversedList);
-        // }, [calendar, filter, startDate, token]);
 
         const getList = useCallback(async () => {
             if (!token) {
@@ -225,22 +185,17 @@ export default function Home() {
             try {
                 const response = await fetch(`/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
                     headers: {
-                        "authorization": token
+                        "authorization": token,
+                        "Content-Type": "application/json"
                     },
                     method: "GET",
                 });
-
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    console.error("Error fetching data:", response.status, response.statusText);
+                    return;
                 }
                 const result = await response.json();
-                if (!result.result) {
-                    throw new Error('Response does not contain a valid "result" field');
-                }
                 const parsedResult = JSON.parse(result.result);
-                if (!Array.isArray(parsedResult)) {
-                    throw new Error('Parsed result is not an array');
-                }
                 const reversedList = parsedResult.reverse();
                 setFilteredList(reversedList);
                 console.log("FilteredList:", reversedList);
@@ -250,19 +205,18 @@ export default function Home() {
         }, [calendar, filter, startDate, token]);
 
         const budgetRatio = useCallback(() => {
-            let num = salary.replaceAll(',', '');
+            let num = parseInt(salary.includes(",") ? salary.replaceAll(',', '') : salary);
             num = parseInt(num);
             if (essentialsShare && nonessentialsShare) {
                 if ((parseInteger(essentialsShare) + parseInteger(nonessentialsShare) + parseInteger(savingsShare)) === num) {
-                    let deg1 = (360 * (parseInteger(essentialsShare) / num)).toFixed(2);
-                    let deg2 = (parseInteger((360 * (parseInteger(nonessentialsShare) / num)).toFixed(2)) + parseInteger(deg1));
-                    let deg3 = (360 * (parseInteger(savingsShare) / num)).toFixed(2);
+                    const deg1 = (360 * (parseInteger(essentialsShare) / num)).toFixed(2);
+                    const deg2 = (parseInteger((360 * (parseInteger(nonessentialsShare) / num)).toFixed(2)) + parseInteger(deg1));
+                    const deg3 = (360 * (parseInteger(savingsShare) / num)).toFixed(2);
                     setDegA(deg1);
                     setDegB(deg2);
                     setDegC(deg3);
                 }
             }
-            //console.log(num);
         }, [essentialsShare, nonessentialsShare, salary, savingsShare]);
 
         useEffect(() => {
@@ -322,7 +276,7 @@ export default function Home() {
                         <div className=" flex flex-row items-end bg-black border-b border-slate-500 sticky py-2 top-0 z-50">
                             <div className="relative inline-block text-black">
                                 <button
-                                    onClick={() => { toggleDropdown() }}
+                                    onClick={() => { setDropdownOpen(!isDropdownOpen) }}
                                     className=" text-4xl text-white  rounded  focus:outline-none">
                                     ☰
                                 </button>
@@ -341,7 +295,7 @@ export default function Home() {
                             </div>
                             <DatePicker className="w-20 z-11 cursor-pointer caret-transparent focus:outline-none h-min text-4xl bg-black"
                                 selected={startDate}
-                                onChange={(date) => firstDayOfMonth(date)} xl
+                                onChange={(date) => firstDayOfMonth(date)}
                                 dateFormat=" MMM "
                                 showMonthYearPicker
                             />
@@ -470,7 +424,7 @@ export default function Home() {
                     <div className=" flex flex-row items-end bg-black border-b border-slate-500 sticky py-2 top-0 z-50">
                         <div className="relative inline-block text-black">
                             <button
-                                onClick={() => { toggleDropdown() }}
+                                onClick={() => { setDropdownOpen(!isDropdownOpen) }}
                                 className=" text-4xl text-white  rounded  focus:outline-none">
                                 ☰
                             </button>
@@ -490,7 +444,7 @@ export default function Home() {
                         </div>
                         <DatePicker className="w-20 z-11 cursor-pointer caret-transparent focus:outline-none h-min text-4xl bg-black"
                             selected={startDate}
-                            onChange={(date) => firstDayOfMonth(date)} xl
+                            onChange={(date) => firstDayOfMonth(date)}
                             dateFormat=" MMM "
                             showMonthYearPicker
                         />
@@ -541,7 +495,6 @@ export default function Home() {
 
                 </div>
 
-
                 <div className="footer">
                     <div className="flex  justify-between w-full pt-6">
                         <div className=" text-lg mb-2">Transactions </div>
@@ -566,7 +519,6 @@ export default function Home() {
 
                     <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
 
-
                     <div className="list">
                         {Object.entries(transactionsByDate).map(([date, transactions]) => {
                             const headerText = getHeaderText(date);
@@ -581,7 +533,9 @@ export default function Home() {
                                                 <div className="text-base" >{transaction.note}</div>
                                                 <div className="text-xs text-gray-400">{transaction.need} </div>
                                             </div>
-                                            <div onClick={() => { toEditPage(transaction.id) }} className="pr-2 cursor-pointer">🖉</div>
+                                            <div onClick={() => { (window.location.href = `/editExpense/${transaction.id}`) }} className="pr-2 border-b-2 w-4 border-white cursor-pointer">
+                                                <svg className="-mb-1" xmlns="http://www.w3.org/2000/svg" width="20" height="22" id="edit"><path fill="white" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m12 1 4 4L5 16H1v-4zM1 21h18"></path></svg>
+                                            </div>
                                             <div className="text-sm text-right basis-2/6">-₹{transaction.amount}.00</div>
                                         </div>
                                     ))}
@@ -592,7 +546,7 @@ export default function Home() {
 
                 </div>
             </div>
-        </main>
+        </main >
 
     )
 }

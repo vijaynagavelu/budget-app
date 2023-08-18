@@ -2,23 +2,11 @@ import { PrismaClient } from '@prisma/client'
 import { NextResponse } from 'next/server'
 import { verifyFirebaseIdToken } from '@/utils/getFirebaseId';
 
-// export async function GET(request) {
-//     const prisma = new PrismaClient()
-//     const currentUser = await verifyFirebaseIdToken(request);
-//     //console.log(currentUser);
 
-//     const users = await prisma.User.findMany({
-//         where: {
-//             id: currentUser,
-//         },
-//     })
-//     const result = JSON.stringify(users);
-//     return NextResponse.json({ result });
-// }
+const prisma = new PrismaClient()
 
 export async function GET(request) {
     try {
-        const prisma = new PrismaClient();
         const currentUser = await verifyFirebaseIdToken(request);
 
         const users = await prisma.user.findMany({
@@ -27,20 +15,18 @@ export async function GET(request) {
             },
         });
         const result = JSON.stringify(users);
-        return NextResponse.json({ result });
+        return NextResponse.json({ result }, { status: 200 });
+        // return NextResponse.json({ result });
     } catch (error) {
         console.error("Error fetching data:", error);
-        return NextResponse.json({ error: 'Internal Server Error' });
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
 
 
 export async function PUT(request) {
-    const prisma = new PrismaClient()
     const currentUser = await verifyFirebaseIdToken(request);
     const data = await request.json();
-
-    console.log("currentUser", currentUser);
 
     try {
         const updateUsers = await prisma.User.update({
@@ -54,16 +40,14 @@ export async function PUT(request) {
             }
         })
         console.log(updateUsers);
-        return NextResponse.json({ "hello": "salary PUT api" })
+        return NextResponse.json({ message: "Data updated successfully" }, { status: 200 });
     } catch (error) {
-        console.error('Request error', error)
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
-    return NextResponse.json({ "hello": "salary PUT api" })
 }
 
 
 export async function POST(request) {
-    const prisma = new PrismaClient()
     const currentUser = await verifyFirebaseIdToken(request);
     const data = await request.json();
 
@@ -77,8 +61,9 @@ export async function POST(request) {
             }
         })
         console.log(newEntry);
+        return NextResponse.json({ "message": "User created successfully" }, { status: 200 });
     } catch (error) {
         console.error('Request error', error)
+        return NextResponse.json({ "error": "An error occurred" }, { status: 500 });
     }
-    return NextResponse.json({ "hello": "salary POST api" })
 }

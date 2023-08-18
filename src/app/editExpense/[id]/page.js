@@ -15,11 +15,9 @@ export default function Home({ params }) {
     const authUser = useFirebaseAuthentication();
     const [timer, setTimer] = useState('');
     const [error, setError] = useState(false);
-
-    const id = params.id;
-
     const [isDeleted, setIsDeleted] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
+    const id = params.id;
 
     setTimeout(() => setTimer(1), 3000)
 
@@ -38,38 +36,82 @@ export default function Home({ params }) {
         if (!token) {
             return;
         }
-        const response = await fetch(`/api/editExpense?id=${id}&`, {
-            headers: {
-                "authorization": token
-            },
-            method: "GET",
-        });
-        const result = await response.json();
-        console.log(result);
-        const parsedResult = JSON.parse(result.result);
-
-        if (parsedResult[0] && parsedResult[0].amount) {
-            setNote(parsedResult[0].note);
-            setAmount(parsedResult[0].amount);
-            setNeed(parsedResult[0].need);
+        try {
+            const response = await fetch(`/api/editExpense?id=${id}&`, {
+                headers: {
+                    "authorization": token,
+                    "Content-Type": "application/json"
+                },
+                method: "GET",
+            });
+            if (!response.ok) {
+                console.error("Error fetching data:", response.status, response.statusText);
+                return;
+            }
+            const result = await response.json();
+            const parsedResult = JSON.parse(result.result);
+            if (parsedResult[0] && parsedResult[0].amount) {
+                const data = parsedResult[0];
+                setNote(data.note);
+                setAmount(data.amount);
+                setNeed(data.need);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
         }
     }, [id, token]);
 
+
     const updateData = useCallback(async (data) => {
-        if (note && amount && need) {
+        if (!note || !amount || !need) {
+            setError(true);
+            return;
+        }
+        try {
             const response = await fetch(`/api/editExpense?id=${id}&`, {
                 headers: {
-                    "authorization": token
+                    "authorization": token,
+                    "Content-Type": "application/json"
                 },
                 method: "PUT",
                 body: JSON.stringify(data),
             });
+            if (!response.ok) {
+                console.error("Error fetching data:", response.status, response.statusText);
+                return;
+            }
             const result = await response.json();
             console.log("Success:", result);
             handleUpdate();
-            setError(false)
-        } else setError(true);
+            setError(false);
+        } catch (error) {
+            console.error("Error updating data:", error);
+            setError(true);
+        }
     }, [amount, id, need, note, token]);
+
+
+    async function deleteData() {
+        try {
+            const response = await fetch(`/api/editExpense?id=${id}&`, {
+                headers: {
+                    "authorization": token,
+                    "Content-Type": "application/json"
+                },
+                method: "DELETE",
+            });
+            if (!response.ok) {
+                console.error("Error fetching data:", response.status, response.statusText);
+                return;
+            }
+            const result = await response.json();
+            console.log("Success:", result);
+            handleDelete();
+            window.location.href = '/dashboard';
+        } catch (error) {
+            console.error("Error deleting data:", error);
+        }
+    }
 
     const check = useCallback(() => {
         if (note && amount && need) {
@@ -80,22 +122,6 @@ export default function Home({ params }) {
     useEffect(() => {
         check()
     }, [check])
-
-
-    async function deleteData() {
-        const response = await fetch(`/api/editExpense?id=${id}&`, {
-            headers: {
-                "authorization": token
-            },
-            method: "DELETE",
-        });
-        const result = await response.json();
-        console.log("Success:", result);
-        handleDelete();
-        window.location.href = '/dashboard'
-    }
-
-
 
     useEffect(() => {
         if (!authUser) {

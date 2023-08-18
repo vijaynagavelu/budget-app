@@ -1,17 +1,14 @@
 'use client';
 import { useCallback, useEffect, useState } from "react";
-import { Group1 } from "../../../utilities/Group1";
-
+import { Group1 } from "../../utils/Group1";
 import useFirebaseAuthentication from '@/hooks/useFirebaseAuthentication';
 import Link from "next/link";
 import Image from 'next/image';
 
 
-
 export default function Home() {
 
     const authUser = useFirebaseAuthentication();
-
     const [essentials, setEssentials] = useState('');
     const [savings, setSavings] = useState('');
     const [nonessentials, setNonessentials] = useState('');
@@ -46,41 +43,58 @@ export default function Home() {
         if (!token) {
             return;
         }
-        const response = await fetch(`/api/salary`, {
-            headers: {
-                "authorization": token
-            },
-            method: "GET",
-        });
-        const result = await response.json();
-        console.log(result);
-        const parsedResult = JSON.parse(result.result);
-        //console.log("result",parsedResult[0].salary);
-        if (parsedResult && parsedResult[0].essentials) {
-            setData(parsedResult[0].essentials)
+        try {
+            const response = await fetch(`/api/salary`, {
+                headers: {
+                    "authorization": token,
+                    "Content-Type": "application/json"
+                },
+                method: "GET",
+            });
+            if (!response.ok) {
+                console.error("Error fetching data:", response.status, response.statusText);
+                return;
+            }
+            const result = await response.json();
+            const parsedResult = JSON.parse(result.result);
+            console.log("Fetched data:", parsedResult);
+            if (parsedResult && parsedResult[0].essentials) {
+                setData(parsedResult[0].essentials);
+            }
+            setSalary(parsedResult[0].salary);
+        } catch (error) {
+            console.error("Error fetching data:", error);
         }
-        setSalary(parsedResult[0].salary);
     }, [token]);
-
 
     async function updateData(data) {
         if (!token) {
             return;
         }
         if ((parseInt(essentials) + parseInt(nonessentials) + parseInt(savings)) === 100) {
-            const response = await fetch(`/api/salary`, {
-                headers: {
-                    "authorization": token
-                },
-                method: "PUT",
-                body: JSON.stringify(data),
-            });
-            const result = await response.json();
-            console.log("Success:", result);
-            window.location.href = '/pieChart'
-        } else setError(true);
+            try {
+                const response = await fetch(`/api/salary`, {
+                    headers: {
+                        "authorization": token,
+                        "Content-Type": "application/json"
+                    },
+                    method: "PUT",
+                    body: JSON.stringify(data),
+                });
+                if (!response.ok) {
+                    console.error("Error updating data:", response.status, response.statusText);
+                    return;
+                }
+                const result = await response.json();
+                console.log("Success:", result);
+                window.location.href = '/addExpense'
+            } catch (error) {
+                console.error("Error updating data:", error);
+            }
+        } else {
+            setError(true);
+        }
     }
-
 
     const decimal = useCallback((value) => {
         var beforeDecimal = value.split(".").shift();
@@ -90,16 +104,17 @@ export default function Home() {
     }, [])
 
     const budgetRatio = useCallback(() => {
-        let num = salary.replaceAll(',', '');
-        num = parseInt(num);
-        if ((parseInt(essentials) + parseInt(nonessentials) + parseInt(savings)) === 100 && num) {
-            let perA = (num * (essentials / 100)).toFixed(2);
-            let perB = (num * (savings / 100)).toFixed(2);
-            let perC = (num * (nonessentials / 100)).toFixed(2);
+        let num = parseInt(salary.includes(",") ? salary.replaceAll(',', '') : salary);
 
-            let deg1 = (360 * (essentials / 100)).toFixed(2);
-            let deg2 = (parseInt((360 * (savings / 100)).toFixed(2)) + parseInt(deg1));
-            let deg3 = (360 * (nonessentials / 100)).toFixed(2);
+        if ((parseInt(essentials) + parseInt(nonessentials) + parseInt(savings)) === 100 && num) {
+            // Calculate percentage values
+            const perA = (num * (essentials / 100)).toFixed(2);
+            const perB = (num * (savings / 100)).toFixed(2);
+            const perC = (num * (nonessentials / 100)).toFixed(2);
+
+            const deg1 = (360 * (essentials / 100)).toFixed(2);
+            const deg2 = (parseInt((360 * (savings / 100)).toFixed(2)) + parseInt(deg1));
+            const deg3 = (360 * (nonessentials / 100)).toFixed(2);
 
             setEssentialsShare(decimal(perA));
             setSavingsShare(decimal(perB));
@@ -109,18 +124,13 @@ export default function Home() {
             setDegC(deg3);
             setError(false);
         } else {
+            // Reset state values and handle errors
             setEssentialsShare(0);
             setSavingsShare(0);
             setNonessentialsShare(0);
-            console.log("your value is wrongs");
+            //console.log("your value is wrongs");
         }
-    }, [
-        decimal,
-        essentials,
-        nonessentials,
-        salary,
-        savings
-    ]);
+    }, [decimal, essentials, nonessentials, salary, savings]);
 
 
     useEffect(() => {
@@ -138,9 +148,12 @@ export default function Home() {
         budgetRatio();
     }, [budgetRatio]);
 
-    if (data) {
-        window.location.href = '/addExpense';
-    }
+    useEffect(() => {
+        if (data) {
+            window.location.href = '/addExpense';
+        }
+    }, [data]);
+
 
     if (!timer) {
         return (
@@ -153,7 +166,6 @@ export default function Home() {
             </div>
         )
     }
-
 
     if (!salary) {
         return (

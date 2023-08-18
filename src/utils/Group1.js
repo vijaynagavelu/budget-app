@@ -5,7 +5,7 @@ export function Group1({ color, title, amount, percentage, setPercentage }) {
             <div className="flex  items-center gap-2">
                 <div className={`flex w-8 h-8  ${color} rounded`}>
                 </div>
-                <div className="flex w-8 h-8">
+                <div className="flex w-2">
                 </div>
 
                 <div className=" flex flex-col mr-4">
