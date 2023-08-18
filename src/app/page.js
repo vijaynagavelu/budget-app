@@ -31,13 +31,14 @@ export default function Home() {
         }
         try {
             const response = await fetch(`http://localhost:3000/api/salary`, {
+                mode: 'no-cors',
                 headers: {
                     "authorization": token
                 },
                 method: "GET",
             });
             if (!response.ok) {
-                throw new Error("Network error");
+                throw new Error("Networkk error");
             }
             const result = await response.json();
             setAuthenticatedUser(result);
@@ -48,7 +49,6 @@ export default function Home() {
     }, [token]);
 
     useEffect(() => {
-        fetchData();
         if (!authUser) {
             return;
         }
@@ -56,6 +56,7 @@ export default function Home() {
             setToken(val);
             // console.log(val,authUser);
         })
+        fetchData();
     }, [authUser, fetchData])
 
     console.log("Hai");
