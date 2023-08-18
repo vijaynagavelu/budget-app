@@ -58,6 +58,7 @@ export default function Home() {
         })
     }, [authUser, fetchData])
 
+    console.log("Hai");
 
     return (
         <main className="flex h-full justify-center">
