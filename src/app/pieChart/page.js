@@ -46,7 +46,7 @@ export default function Home() {
         if (!token) {
             return;
         }
-        const response = await fetch(`http://localhost:3000/api/salary`, {
+        const response = await fetch(`${process.env.BASE_URL}/api/salary`, {
             headers: {
                 "authorization": token
             },
@@ -68,7 +68,7 @@ export default function Home() {
             return;
         }
         if ((parseInt(essentials) + parseInt(nonessentials) + parseInt(savings)) === 100) {
-            const response = await fetch("http://localhost:3000/api/salary", {
+            const response = await fetch(`${process.env.BASE_URL}/api/salary`, {
                 headers: {
                     "authorization": token
                 },

@@ -29,7 +29,7 @@ export default function Home() {
 
     const postData = useCallback(async (data) => {
         if (note && amount && need && token) {
-            const response = await fetch("http://localhost:3000/api/addExpense", {
+            const response = await fetch(`${process.env.BASE_URL}/api/addExpense`, {
                 headers: {
                     "authorization": token
                 },

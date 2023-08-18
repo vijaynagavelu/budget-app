@@ -17,7 +17,7 @@ export default function Home() {
     setTimeout(() => setTimer(1), 6000)
 
     async function postData(data) {
-        const response = await fetch("http://localhost:3000/api/salary", {
+        const response = await fetch(`${process.env.BASE_URL}/api/salary`, {
             headers: {
                 "authorization": token
             },
@@ -34,7 +34,7 @@ export default function Home() {
         if (!token) {
             return;
         }
-        const response = await fetch(`http://localhost:3000/api/salary`, {
+        const response = await fetch(`${process.env.BASE_URL}/api/salary`, {
             headers: {
                 "authorization": token
             },
@@ -137,7 +137,7 @@ export default function Home() {
 
 
     // async function resDelete() {
-    //     const response = await fetch("http://localhost:3000/api/expense", {
+    //     const response = await fetch("${process.env.BASE_URL}/api/expense", {
     //         method: "DELETE",
     //     });
     //     const result = await response.json();

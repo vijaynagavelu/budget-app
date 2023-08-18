@@ -30,7 +30,7 @@ export default function Home() {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:3000/api/salary`, {
+            const response = await fetch(`${process.env.BASE_URL}/api/salary`, {
                 headers: {
                     "authorization": token
                 },
