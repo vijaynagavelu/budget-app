@@ -10,6 +10,7 @@ export async function GET(request) {
     const currentUser = await verifyFirebaseIdToken(request);
     const parsedParams = parseQueryString(request.url);
 
+    const testDate = new Date()
     const startDate = new Date(processInputString(parsedParams.date));
     const endDate = getNextMonthFirstDay(new Date(processInputString(parsedParams.date)));
 
@@ -28,7 +29,9 @@ export async function GET(request) {
         url: request.url,
         parsedParams,
         startDate,
-        endDate
+        endDate,
+        testDate,
+        processInputString: processInputString(parsedParams.date)
     })
 
     try {
