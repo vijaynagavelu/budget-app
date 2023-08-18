@@ -127,21 +127,49 @@ export default function Home() {
 
 
     {
+        // const getData = useCallback(async () => {
+        //     if (!token) {
+        //         return;
+        //     }
+        //     const response = await fetch(`/api/salary`, {
+        //         headers: {
+        //             "authorization": token
+        //         },
+        //         method: "GET",
+        //     });
+        //     const result = await response.json();
+        //     const parsedResult = JSON.parse(result.result);
+        //     //console.log("result", parsedResult[0]);
+        //     setEssentialsShare(parsedResult[0].essentials), setSavingsShare(parsedResult[0].savings), setNonessentialsShare(parsedResult[0].non_essentials)
+        //     setSalary(parsedResult[0].salary);
+        // }, [token]);
+
         const getData = useCallback(async () => {
             if (!token) {
                 return;
             }
-            const response = await fetch(`/api/salary`, {
-                headers: {
-                    "authorization": token
-                },
-                method: "GET",
-            });
-            const result = await response.json();
-            const parsedResult = JSON.parse(result.result);
-            //console.log("result", parsedResult[0]);
-            setEssentialsShare(parsedResult[0].essentials), setSavingsShare(parsedResult[0].savings), setNonessentialsShare(parsedResult[0].non_essentials)
-            setSalary(parsedResult[0].salary);
+            try {
+                const response = await fetch(`/api/salary`, {
+                    headers: {
+                        "authorization": token
+                    },
+                    method: "GET",
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                const parsedResult = JSON.parse(result.result);
+
+                setEssentialsShare(parsedResult[0].essentials);
+                setSavingsShare(parsedResult[0].savings);
+                setNonessentialsShare(parsedResult[0].non_essentials);
+                setSalary(parsedResult[0].salary);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         }, [token]);
 
         const getAmount = useCallback(async () => {
@@ -174,21 +202,52 @@ export default function Home() {
             setSpent(nonessentialsSpent + essentialsSpent)
         }, [essentialsSpent, nonessentialsSpent, startDate, token]);
 
+        // const getList = useCallback(async () => {
+        //     if (!token) {
+        //         return;
+        //     }
+        //     const response = await fetch(`/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
+        //         headers: {
+        //             "authorization": token
+        //         },
+        //         method: "GET",
+        //     });
+        //     const result = await response.json();
+        //     const parsedResult = JSON.parse(result.result);
+        //     const reversedList = parsedResult.reverse();
+        //     setFilteredList(reversedList);
+        //     console.log("FilteredList :", reversedList);
+        // }, [calendar, filter, startDate, token]);
+
         const getList = useCallback(async () => {
             if (!token) {
                 return;
             }
-            const response = await fetch(`/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
-                headers: {
-                    "authorization": token
-                },
-                method: "GET",
-            });
-            const result = await response.json();
-            const parsedResult = JSON.parse(result.result);
-            const reversedList = parsedResult.reverse();
-            setFilteredList(reversedList);
-            console.log("FilteredList :", reversedList);
+            try {
+                const response = await fetch(`/api/dashboard?tag=${filter}&date=${startDate}&singleDate=${calendar}`, {
+                    headers: {
+                        "authorization": token
+                    },
+                    method: "GET",
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const result = await response.json();
+                if (!result.result) {
+                    throw new Error('Response does not contain a valid "result" field');
+                }
+                const parsedResult = JSON.parse(result.result);
+                if (!Array.isArray(parsedResult)) {
+                    throw new Error('Parsed result is not an array');
+                }
+                const reversedList = parsedResult.reverse();
+                setFilteredList(reversedList);
+                console.log("FilteredList:", reversedList);
+            } catch (error) {
+                console.error("Error fetching or processing data:", error);
+            }
         }, [calendar, filter, startDate, token]);
 
         const budgetRatio = useCallback(() => {
@@ -228,6 +287,7 @@ export default function Home() {
         firstDayOfMonth(new Date());
     }, [])
 
+
     if (!filteredList) {
         return (
             <div className='flex justify-center h-full items-center text-center '>
@@ -239,7 +299,6 @@ export default function Home() {
             </div>
         )
     }
-
 
     if (!salary) {
         return (
@@ -254,7 +313,6 @@ export default function Home() {
             </main >
         )
     }
-
 
     if (!filteredList.length) {
         return (
@@ -376,7 +434,7 @@ export default function Home() {
         const now = new Date(transaction.updatedAt)
         now.setHours(now.getHours() - 5);
         now.setMinutes(now.getMinutes() - 30);
-        console.log(now);
+        //console.log(now);
         const date = new Date(now).toLocaleDateString();
         if (!acc[date]) {
             acc[date] = [];
