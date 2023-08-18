@@ -1,5 +1,4 @@
 "use client"
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import Image from 'next/image';
 import useFirebaseAuthentication from "@/hooks/useFirebaseAuthentication";
