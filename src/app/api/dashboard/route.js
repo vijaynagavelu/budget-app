@@ -13,24 +13,36 @@ export async function GET(request) {
         const singleDay = (parsedParams.singleDate)
         const tag = (parsedParams.tag);
         const startDate = new Date(parsedParams.date);
-        const endDate = getNextMonthFirstDay(new Date(parsedParams.date));
+        const endDate = currentMonthLastDate(new Date(parsedParams.date));
 
-        const todayStartDate = new Date(parsedParams.singleDate);
-        const todayEndDate = getFirstDayOfFollowingMonth(new Date(parsedParams.singleDate));
+        // const todayStartDate = new Date(parsedParams.singleDate);
+        const todayStartDate = currentDateStartTime(new Date(parsedParams.singleDate));
+        const todayEndDate = currentDateEndTime(new Date(parsedParams.singleDate));
 
-        function getNextMonthFirstDay(date) {
+        function currentMonthLastDate(date) {
             if (!date) {
                 return null;
             }
             return new Date(date.getFullYear(), date.getMonth() + 1, 1);
         }
 
-        function getFirstDayOfFollowingMonth(date) {
+        function currentDateStartTime(date) {
             if (!date) {
                 return null;
             }
-            const result = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 2)
-            result.setUTCHours(0, 0, 0, 0);
+            const result = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
+            result.setUTCHours(0, 1, 0, 0);
+            console.log("start", result);
+            return result;
+        }
+
+        function currentDateEndTime(date) {
+            if (!date) {
+                return null;
+            }
+            const result = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
+            result.setUTCHours(23, 59, 0, 0);
+            console.log("end", result);
             return result;
         }
 
@@ -71,7 +83,7 @@ export async function GET(request) {
                 }
             });
             const result = JSON.stringify(filteredList);
-            console.log("result", result)
+            //console.log("result", result)
             return NextResponse.json({ result }, { status: 200 });
         }
 
