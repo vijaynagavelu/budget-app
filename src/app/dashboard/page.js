@@ -569,8 +569,6 @@ export default function Home() {
 
 
 
-
-
 /* <ul className="text-xs flex gap-2">
                        <li className="w-fit border-2 rounded-md px-2 border-gray-500">All</li>
                        <li className="w-fit border-2 rounded-md px-2 border-gray-500">Food</li>

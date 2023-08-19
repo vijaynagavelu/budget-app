@@ -5,12 +5,16 @@ import { auth, provider } from "./googleSignIn/config"
 import { signInWithPopup } from 'firebase/auth';
 import useFirebaseAuthentication from '@/hooks/useFirebaseAuthentication';
 
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 
 export default function Home() {
 
     const [token, setToken] = useState('');
     const [authenticatedUser, setAuthenticatedUser] = useState('');
     const authUser = useFirebaseAuthentication();
+    const [email, setEmail] = useState('paul@gmail.com');
+    const [password, setPassword] = useState('123456');
 
 
     useEffect(() => {
@@ -19,10 +23,24 @@ export default function Home() {
         }
     }, [authenticatedUser]);
 
-    const handleClick = () => {
+    const signInWithGmail = () => {
         signInWithPopup(auth, provider).then((data) => {
             console.log(data.user)
         })
+    }
+
+    const loginWithDemoAccount = async (e) => {
+        e.preventDefault()
+        try {
+            await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            )
+            console.log("logged");
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
     const fetchData = useCallback(async () => {
@@ -63,7 +81,7 @@ export default function Home() {
 
 
     return (
-        <main className="flex h-full justify-center">
+        <main className="flex h-full  justify-center items-center">
 
             <div className=' hidden lg:flex flex-col bg-gray-800 basis-1/2'>
                 <div className="justify-start  text-2xl  mb-16 pt-6 pl-6">
@@ -85,29 +103,29 @@ export default function Home() {
             </div>
 
 
-            <div className='flex px-10 flex-col justify-center lg:basis-1/2'>
+            <div className='flex px-10 flex-col h-full flex-start pt-12 lg:basis-1/2'>
                 <div className=" max-w-xl  lg:hidden   text-2xl  mb-16">
                     Budgetry
                 </div>
                 <h1 className='text-5xl font-semibold mb-2 '>Get started.</h1>
 
                 <p className='text-sm mb-6'>Already have an account?
-                    <span className='text-indigo-400 '>&nbsp; Login</span>
+                    <span className='text-indigo-400 '>&nbsp; Sign up</span>
                 </p>
 
                 <div className='flex flex-col justify-between  lg:flex-row gap-x-2'>
-                    <div className='flex flex-row w-full  mb-4 lg:mb-0 justify-center items-center border gap-x-2 rounded-md px-2'>
+                    <div onClick={signInWithGmail} className='flex flex-row cursor-pointer w-full  mb-4 lg:mb-0 justify-center items-center border gap-x-2 rounded-md px-2'>
                         <Image className="emoji"
                             width={18}
                             height={18}
                             alt="sry"
                             src="https://cdn-icons-png.flaticon.com/512/281/281764.png" />
 
-                        <p onClick={handleClick} className='py-3 text-sm cursor-pointer'>
+                        <p className='py-3 text-sm '>
                             Continue with Google</p>
                     </div>
 
-                    <div className='flex flex-row w-full  justify-center items-center border gap-x-2  rounded-md  px-2'>
+                    {/* <div className='flex flex-row w-full  justify-center items-center border gap-x-2  rounded-md  px-2'>
                         <Image className="emoji "
                             width={18}
                             height={18}
@@ -116,7 +134,7 @@ export default function Home() {
 
                         <p className='py-3 text-sm '>
                             Continue with Facebook</p>
-                    </div>
+                    </div> */}
                 </div>
 
 
@@ -126,23 +144,22 @@ export default function Home() {
                     <span className="border h-0 w-full"></span>
                 </div>
 
-
                 <p className=' text-xs mb-1.5'>Email address</p>
-                <input readOnly className='text-black text-base p-3 font-medium  mb-4 rounded-md' placeholder=''
-                    token={""}></input>
+                <input readOnly className='text-black text-base p-3 font-medium  mb-4 rounded-md' value={email}></input>
 
                 <p className=' text-xs mb-1.5'>
                     Password</p>
-                <input readOnly className='text-black text-base p-3 font-normal mb-4 rounded-md'></input>
+                <input type='password' readOnly className='text-black text-base p-3 font-normal mb-4 rounded-md' value={password}></input>
 
-                <p className='5 text-xs mb-1.5'>
+                {/* <p className='5 text-xs mb-1.5'>
                     Confirm Password</p>
-                <input readOnly className='text-black text-base p-3 font-normal mb-8 rounded-md'></input>
+                <input readOnly className='text-black text-base p-3 font-normal mb-8 rounded-md'></input> */}
+                <div className='h-full w-full flex items-end'>
+                    <button type='button' onClick={loginWithDemoAccount} className=' py-2 mb-8 bg-indigo-600 w-full rounded-md'>
+                        Login with Demo Account
+                    </button>
+                </div>
 
-
-                <button type='button' className='py-2 bg-indigo-600 w-full rounded-md'>
-                    Register
-                </button>
             </div>
 
         </main>
