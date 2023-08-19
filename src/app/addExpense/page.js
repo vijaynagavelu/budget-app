@@ -19,15 +19,13 @@ export default function Home() {
 
     function firstDayOfMonth() {
         const currentDate = new Date(); // Current date and time
-        // const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
-        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 2);
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
         setCreatedAt(firstDayOfMonth);
     }
 
     function currentDayOfMonth() {
         const currentDate = new Date(); // Current date and time
-        // const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-        const currentDayOfMonth = new Date(currentDate.getFullYear(), 6, 31);
+        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
         currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
         setUpdatedAt(currentDayOfMonth);
     }
