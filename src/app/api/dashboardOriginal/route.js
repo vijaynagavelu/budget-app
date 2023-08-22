@@ -13,19 +13,12 @@ export async function GET(request) {
 
         const singleDay = (parsedParams.singleDate)
         const tag = (parsedParams.tag);
-        const startDate = convertToEpoch(new Date(parsedParams.date));
-        const endDate = convertToEpoch(currentMonthLastDate(new Date(parsedParams.date)));
+        const startDate = new Date(parsedParams.date);
+        const endDate = currentMonthLastDate(new Date(parsedParams.date));
 
         // const todayStartDate = new Date(parsedParams.singleDate);
-        const todayStartDate = convertToEpoch(currentDateStartTime(new Date(parsedParams.singleDate)));
-        const todayEndDate = convertToEpoch(currentDateEndTime(new Date(parsedParams.singleDate)));
-
-        function convertToEpoch(date) {
-            const epochTimestamp = Math.floor(date.getTime() / 1000);
-            console.log("D", epochTimestamp);
-            return epochTimestamp;
-        }
-
+        const todayStartDate = currentDateStartTime(new Date(parsedParams.singleDate));
+        const todayEndDate = currentDateEndTime(new Date(parsedParams.singleDate));
 
         function currentMonthLastDate(date) {
             if (!date) {
@@ -55,8 +48,7 @@ export async function GET(request) {
         }
 
         if (singleDay !== 'null' && tag == 'All' && todayStartDate && todayEndDate) {
-            // const filteredList = await prisma.Expense.findMany({
-            const filteredList = await prisma.Expense2.findMany({
+            const filteredList = await prisma.Expense.findMany({
                 where: {
                     user_id: currentUser,
                     createdAt: {
@@ -77,9 +69,7 @@ export async function GET(request) {
         if (singleDay !== 'null' && tag !== 'All' && todayStartDate && todayEndDate) {
             //console.log("todayStartDate", todayStartDate);
             //console.log("todayEndDate", todayEndDate);
-            // const filteredList = await prisma.Expense.findMany({
-            const filteredList = await prisma.Expense2.findMany({
-
+            const filteredList = await prisma.Expense.findMany({
                 where: {
                     user_id: currentUser,
                     need: tag,
@@ -101,9 +91,7 @@ export async function GET(request) {
         if (tag !== 'All' && startDate && endDate) {
             //console.log("startDate", startDate);
             //console.log("endDate", endDate);
-            // const filteredList = await prisma.Expense.findMany({
-            const filteredList = await prisma.Expense2.findMany({
-
+            const filteredList = await prisma.Expense.findMany({
                 where: {
                     user_id: currentUser,
                     need: tag,
@@ -118,8 +106,7 @@ export async function GET(request) {
         }
 
         if (tag == 'All' && startDate && endDate) {
-            // const filteredList = await prisma.Expense.findMany({
-            const filteredList = await prisma.Expense2.findMany({
+            const filteredList = await prisma.Expense.findMany({
                 where: {
                     user_id: currentUser,
                     createdAt: {

@@ -37,7 +37,6 @@ export default function Home() {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
 
-
     const logOut = () => {
         signOut(auth).then(() => {
             // Sign-out successful.
@@ -383,12 +382,22 @@ export default function Home() {
         )
     }
 
+    function convertToHumanReadable(time) {
+        const timestamp = parseInt(time, 10) * 1000;
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleDateString();
+        console.log(date, formattedDate);
+        return formattedDate;
+    }
+
     const transactionsByDate = filteredList.reduce((acc, transaction) => {
-        const now = new Date(transaction.updatedAt)
-        now.setHours(now.getHours() - 5);
-        now.setMinutes(now.getMinutes() - 30);
-        //console.log(now);
-        const date = new Date(now).toLocaleDateString();
+        const now = convertToHumanReadable(transaction.updatedAt);
+        // const now = new Date(transaction.updatedAt)
+        //now.setHours(now.getHours() - 5);
+        //now.setMinutes(now.getMinutes() - 30);
+        console.log(now);
+        // const date = new Date(now).toLocaleDateString();
+        const date = now;
         if (!acc[date]) {
             acc[date] = [];
         }

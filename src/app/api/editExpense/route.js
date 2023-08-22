@@ -12,7 +12,8 @@ export async function GET(request) {
         const parsedParams = parseQueryString(request.url);
         const id = parseInt(parsedParams.id);
 
-        const users = await prisma.Expense.findMany({
+        const users = await prisma.Expense2.findMany({
+            // const users = await prisma.Expense.findMany({
             where: {
                 id: id,
                 user_id: currentUser,
@@ -38,7 +39,8 @@ export async function PUT(request) {
             const parsedParams = parseQueryString(request.url);
             const id = parseInt(parsedParams.id);
 
-            const updateExpense = await prisma.Expense.update({
+            const updateExpense = await prisma.Expense2.update({
+                //const updateExpense = await prisma.Expense.update({
                 where: {
                     id: id,
                 },
@@ -67,7 +69,8 @@ export async function DELETE(request) {
             const parsedParams = parseQueryString(request.url);
             const id = parseInt(parsedParams.id);
 
-            const deleteUser = await prisma.Expense.delete({
+            const deleteUser = await prisma.Expense2.delete({
+                // const deleteUser = await prisma.Expense.delete({
                 where: {
                     id: id,
                 },

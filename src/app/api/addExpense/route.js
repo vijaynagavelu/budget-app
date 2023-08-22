@@ -11,8 +11,15 @@ export async function GET(request) {
         const currentUser = await verifyFirebaseIdToken(request);
         const parsedParams = parseQueryString(request.url);
 
-        const startDate = new Date(parsedParams.date);
-        const endDate = getNextMonthFirstDay(new Date(parsedParams.date));
+        const startDate = convertToEpoch(new Date(parsedParams.date));
+        const endDate = convertToEpoch(getNextMonthFirstDay(new Date(parsedParams.date)));
+
+
+        function convertToEpoch(date) {
+            const epochTimestamp = Math.floor(date.getTime() / 1000);
+            console.log("AE", epochTimestamp);
+            return epochTimestamp;
+        }
 
         function getNextMonthFirstDay(date) {
             if (!date) {
@@ -21,7 +28,8 @@ export async function GET(request) {
             return new Date(date.getFullYear(), date.getMonth() + 1, 1);
         }
 
-        const needValues = await prisma.Expense.groupBy({
+        // const needValues = await prisma.Expense.groupBy({
+        const needValues = await prisma.Expense2.groupBy({
             by: ["need"],
             where: {
                 user_id: currentUser,
@@ -48,7 +56,8 @@ export async function POST(request) {
     const currentUser = await verifyFirebaseIdToken(request);
     const data = await request.json();
     try {
-        const newEntry = await prisma.Expense.create({
+        // const newEntry = await prisma.Expense.create({
+        const newEntry = await prisma.Expense2.create({
             data: {
                 need: data.need,
                 user_id: currentUser,

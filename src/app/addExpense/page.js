@@ -20,14 +20,21 @@ export default function Home() {
     function firstDayOfMonth() {
         const currentDate = new Date(); // Current date and time
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
-        setCreatedAt(firstDayOfMonth);
+        setCreatedAt(convertToEpoch(firstDayOfMonth));
     }
 
     function currentDayOfMonth() {
         const currentDate = new Date(); // Current date and time
-        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-        currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
-        setUpdatedAt(currentDayOfMonth);
+        const currentDayOfMonth = new Date(currentDate);
+        // const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+        //currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
+        setUpdatedAt(convertToEpoch(currentDayOfMonth));
+    }
+
+    function convertToEpoch(date) {
+        const epochTimestamp = Math.floor(date.getTime() / 1000);
+        console.log("AE", epochTimestamp);
+        return epochTimestamp;
     }
 
     const handleUpdate = () => {

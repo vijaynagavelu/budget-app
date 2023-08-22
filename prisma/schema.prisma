@@ -9,14 +9,15 @@ datasource db {
 }
 
 model User {
-  id             String    @id
-  email          String    @unique
+  id             String     @id
+  email          String     @unique
   name           String
   salary         String?
   essentials     String?
   non_essentials String?
   savings        String?
   expenses       Expense[]
+  Expense2       Expense2[]
 }
 
 model Expense {
@@ -28,6 +29,19 @@ model Expense {
   note      String
   createdAt String
   updatedAt String
+
+  @@index([user_id]) // to make this as primary id  while querying primary id give results fast compared to other terms example name email 
+}
+
+model Expense2 {
+  id        Int    @id @default(autoincrement())
+  user_id   String
+  user      User   @relation(fields: [user_id], references: [id])
+  need      String
+  amount    Int
+  note      String
+  createdAt Int
+  updatedAt Int
 
   @@index([user_id]) // to make this as primary id  while querying primary id give results fast compared to other terms example name email 
 }
