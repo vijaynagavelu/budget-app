@@ -17,7 +17,6 @@ export async function GET(request) {
 
         function convertToEpoch(date) {
             const epochTimestamp = Math.floor(date.getTime() / 1000);
-            console.log("AE", epochTimestamp);
             return epochTimestamp;
         }
 

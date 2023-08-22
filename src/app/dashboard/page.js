@@ -361,7 +361,7 @@ export default function Home() {
 
                         <div className="flex items-center gap-2 w-full mb-4">
                             {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
-                            {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm "> {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
+                            {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}> {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
 
                             <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
                                 <span className="text-white font-normal text-xs">clear date</span>
@@ -386,17 +386,13 @@ export default function Home() {
         const timestamp = parseInt(time, 10) * 1000;
         const date = new Date(timestamp);
         const formattedDate = date.toLocaleDateString();
-        console.log(date, formattedDate);
+        //console.log(date, formattedDate);
         return formattedDate;
     }
 
     const transactionsByDate = filteredList.reduce((acc, transaction) => {
         const now = convertToHumanReadable(transaction.updatedAt);
-        // const now = new Date(transaction.updatedAt)
-        //now.setHours(now.getHours() - 5);
-        //now.setMinutes(now.getMinutes() - 30);
-        console.log(now);
-        // const date = new Date(now).toLocaleDateString();
+        //console.log(now);
         const date = now;
         if (!acc[date]) {
             acc[date] = [];
@@ -406,7 +402,8 @@ export default function Home() {
     }, {});
 
     function formatDate(date) {
-        const options = { day: 'numeric', month: 'short' };
+        const options = { month: 'short', day: 'numeric' };
+        // const options = { month: 'short', day: '2-digit' };
         return new Date(date).toLocaleDateString('en-US', options);
     }
 
@@ -519,7 +516,7 @@ export default function Home() {
 
                     <div className="flex items-center gap-2 w-full mb-4">
                         {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
-                        {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm "> {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
+                        {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }} > {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
 
                         <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
                             <span className="text-white font-normal text-xs">clear date</span>
@@ -536,8 +533,7 @@ export default function Home() {
                                     <div className="text-sm  mt-2 text-gray-400">{headerText} </div>
                                     {transactions.map((transaction, index) => (
                                         <div key={index} className="flex justify-between items-center py-2">
-                                            {(transaction.need == "Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
-                                            {(transaction.need == "Non Essentials") && <div className="text-2xl basis-1/6 rounded mr-10  h-8" style={{ backgroundColor: generateRandomColor() }}></div>}
+                                            <div className="text-2xl w-10 rounded mr-4  h-8" style={{ backgroundColor: generateRandomColor() }}></div>
                                             <div className="basis-4/6">
                                                 <div className="text-base" >{transaction.note}</div>
                                                 <div className="text-xs text-gray-400">{transaction.need} </div>

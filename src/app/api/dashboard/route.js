@@ -16,13 +16,11 @@ export async function GET(request) {
         const startDate = convertToEpoch(new Date(parsedParams.date));
         const endDate = convertToEpoch(currentMonthLastDate(new Date(parsedParams.date)));
 
-        // const todayStartDate = new Date(parsedParams.singleDate);
         const todayStartDate = convertToEpoch(currentDateStartTime(new Date(parsedParams.singleDate)));
         const todayEndDate = convertToEpoch(currentDateEndTime(new Date(parsedParams.singleDate)));
 
         function convertToEpoch(date) {
             const epochTimestamp = Math.floor(date.getTime() / 1000);
-            console.log("D", epochTimestamp);
             return epochTimestamp;
         }
 
@@ -31,7 +29,8 @@ export async function GET(request) {
             if (!date) {
                 return null;
             }
-            return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+            const result = new Date(date.getFullYear(), date.getMonth() + 1, 1)
+            return result;
         }
 
         function currentDateStartTime(date) {
@@ -39,7 +38,6 @@ export async function GET(request) {
                 return null;
             }
             const result = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-            // result.setUTCHours(0, 1, 0, 0);
             //console.log("start", result);
             return result;
         }
@@ -49,7 +47,6 @@ export async function GET(request) {
                 return null;
             }
             const result = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
-            // result.setUTCHours(23, 59, 0, 0);
             //console.log("end", result);
             return result;
         }

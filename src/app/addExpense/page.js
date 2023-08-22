@@ -17,23 +17,20 @@ export default function Home() {
     const authUser = useFirebaseAuthentication();
 
 
-    function firstDayOfMonth() {
+    const firstDayOfMonth = useCallback(async () => {
         const currentDate = new Date(); // Current date and time
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
         setCreatedAt(convertToEpoch(firstDayOfMonth));
-    }
+    }, [])
 
-    function currentDayOfMonth() {
+    const currentDayOfMonth = useCallback(async () => {
         const currentDate = new Date(); // Current date and time
-        const currentDayOfMonth = new Date(currentDate);
-        // const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-        //currentDayOfMonth.setHours(currentDate.getHours() + 5, currentDate.getMinutes() + 30, currentDate.getSeconds(), currentDate.getMilliseconds())
+        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 5, currentDate.getHours());
         setUpdatedAt(convertToEpoch(currentDayOfMonth));
-    }
+    }, [])
 
     function convertToEpoch(date) {
         const epochTimestamp = Math.floor(date.getTime() / 1000);
-        console.log("AE", epochTimestamp);
         return epochTimestamp;
     }
 
@@ -94,7 +91,7 @@ export default function Home() {
             firstDayOfMonth();
             currentDayOfMonth();
         })
-    }, [authUser])
+    }, [authUser, currentDayOfMonth, firstDayOfMonth])
 
     return (
         <main className="flex justify-center">
