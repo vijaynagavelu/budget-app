@@ -402,8 +402,8 @@ export default function Home() {
     }, {});
 
     function formatDate(date) {
-        const options = { month: 'short', day: 'numeric' };
-        // const options = { month: 'short', day: '2-digit' };
+        // const options = { month: 'short', day: 'numeric' };
+        const options = { month: 'short', day: '2-digit' };
         return new Date(date).toLocaleDateString('en-US', options);
     }
 
