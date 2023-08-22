@@ -38,8 +38,8 @@ export async function GET(request) {
             if (!date) {
                 return null;
             }
-            const result = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
-            result.setUTCHours(0, 1, 0, 0);
+            const result = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+            // result.setUTCHours(0, 1, 0, 0);
             //console.log("start", result);
             return result;
         }
@@ -49,7 +49,7 @@ export async function GET(request) {
                 return null;
             }
             const result = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
-            result.setUTCHours(23, 59, 0, 0);
+            // result.setUTCHours(23, 59, 0, 0);
             //console.log("end", result);
             return result;
         }
