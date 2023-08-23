@@ -218,7 +218,6 @@ export default function Home() {
         if (!token) {
             return;
         }
-        setFilteredList(false);
         try {
             const response = await fetch(`/api/addExpense?date=${startDate}&`, {
                 headers: {
@@ -363,9 +362,9 @@ export default function Home() {
                     </div>
 
 
-                    <div className="footer">
+                    <div className="footer h-46">
                         <div className="flex  justify-between w-full pt-6">
-                            <div className=" text-lg mb-2">Transactions ggggggggg </div>
+                            <div className=" text-lg mb-2">Transactions </div>
 
                             <div className="flex" onChange={(e) => { setFilter([e.target.value]) }} >
                                 <select className="text-white bg-transparent border-2 cursor-pointer border-gray-500 text-base font-medium grow rounded-md h-8 w-12">
@@ -376,12 +375,23 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="flex h-56 items-center gap-2 w-full mb-4">
+                        <div className="flex items-center gap-2 w-full mb-4">
                             <div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div>
 
                             <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
                                 <span className="text-white font-normal text-xs">clear date</span>
                             </button>
+                        </div>
+
+                        <div className="text-sm px-2 mt-2 text-gray-400">Today </div>
+
+                        <div className="flex justify-between items-center py-2">
+                            <div className="text-2xl  ">🍜</div>
+                            <div className="basis-3/5">
+                                <div className="text-base" >Weekend dinner</div>
+                                <div className="text-xs text-gray-400">Eat out</div>
+                            </div>
+                            <div className="text-sm ">-₹980.00</div>
                         </div>
 
                     </div>
