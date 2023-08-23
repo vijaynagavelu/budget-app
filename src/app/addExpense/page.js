@@ -27,9 +27,9 @@ export default function Home() {
 
     const currentDayOfMonth = useCallback(async () => {
         const currentDate = new Date(); // Current date and time
-        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), temp, currentDate.getHours());
-        setUpdatedAt(convertToEpoch(currentDayOfMonth));
-    }, [temp])
+        // const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours());
+        setUpdatedAt(convertToEpoch(currentDate));
+    }, [])
 
     function convertToEpoch(date) {
         const epochTimestamp = Math.floor(date.getTime() / 1000);

@@ -8,7 +8,6 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import Image from "next/image";
 
 
 export default function Home() {
@@ -510,8 +509,8 @@ export default function Home() {
                         <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
 
 
-                        <div className=" w-full text-red-500 overflow-auto custom-scrollbar">
-                            No Transactions done...
+                        <div className=" w-full h-72 text-red-500 ">
+                            No Transactions done....
                         </div>
 
                     </div>
@@ -564,37 +563,36 @@ export default function Home() {
         <main className="flex justify-center ">
             <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
 
-                <div className="topPortion ">
-                    <div className=" flex flex-row items-end bg-black border-b border-slate-500 sticky py-2 top-0 z-50">
-                        <div className="relative inline-block text-black">
-                            <button
-                                onClick={() => { setDropdownOpen(!isDropdownOpen) }}
-                                className=" text-4xl text-white  rounded  focus:outline-none">
-                                ☰
-                            </button>
-                            {isDropdownOpen && (
-                                <div className="absolute cursor-pointer text-white left-1  right-0 mt-2  rounded-md">
-                                    <ul className="">
-                                        <Link href="/addExpense">
-                                            <li className="bg-gray-100 w-28 text-black py-1 px-1 rounded-md">Add Expense</li>
-                                        </Link>
-                                        <Link href="/">
-                                            <li onClick={logOut} className="bg-gray-100 w-20 text-black py-1 px-1 rounded-md">Logout</li>
-                                        </Link>
-                                    </ul>
-                                </div>
-                            )}
-                        </div>
-                        <DatePicker className="w-20 z-11 cursor-pointer caret-transparent focus:outline-none h-min text-4xl bg-black"
-                            selected={startDate}
-                            onChange={(date) => firstDayOfMonth(date)}
-                            dateFormat=" MMM "
-                            showMonthYearPicker
-                        />
-                        <div className="text-sm pl-2 text-gray-400">{daysRemainingInMonth()}</div>
+                <nav className=" flex flex-row items-end bg-black border-b border-slate-500 sticky top-0  py-2  z-50">
+                    <div className="relative inline-block text-black">
+                        <button
+                            onClick={() => { setDropdownOpen(!isDropdownOpen) }}
+                            className=" text-4xl text-white  rounded  focus:outline-none">
+                            ☰
+                        </button>
+                        {isDropdownOpen && (
+                            <div className="absolute cursor-pointer text-white left-1  right-0 mt-2  rounded-md">
+                                <ul className="">
+                                    <Link href="/addExpense">
+                                        <li className="bg-gray-100 w-28 text-black py-1 px-1 rounded-md">Add Expense</li>
+                                    </Link>
+                                    <Link href="/">
+                                        <li onClick={logOut} className="bg-gray-100 w-20 text-black py-1 px-1 rounded-md">Logout</li>
+                                    </Link>
+                                </ul>
+                            </div>
+                        )}
                     </div>
+                    <DatePicker className="w-20 z-11 cursor-pointer caret-transparent focus:outline-none h-min text-4xl bg-black"
+                        selected={startDate}
+                        onChange={(date) => firstDayOfMonth(date)}
+                        dateFormat=" MMM "
+                        showMonthYearPicker
+                    />
+                    <div className="text-sm pl-2 text-gray-400">{daysRemainingInMonth()}</div>
+                </nav>
 
-
+                <div className="topPortion ">
                     <div className="flex mt-6 justify-center">
                         <div className="w-40 h-40 bg-white z-5 rounded-full whiteRound">
                             <div className="text-black w-40 flex justify-center font-semibold totalAmount">
@@ -639,7 +637,7 @@ export default function Home() {
                 </div>
 
                 <div className="footer">
-                    <div className="flex  justify-between w-full pt-6">
+                    <div className="flex  justify-between w-full pt-6 sticky top-10 bg-black">
                         <div className=" text-lg mb-2">Transactions </div>
 
                         <div className="flex" onChange={(e) => { setFilter([e.target.value]) }} >
@@ -651,7 +649,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full mb-4">
+                    <div className="flex items-center gap-2 w-full mb-4 sticky pb-2 top-24  bg-black">
                         {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
                         {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }} > {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
 
@@ -725,13 +723,13 @@ export default function Home() {
                                     <div className="text-sm  mt-2 text-gray-400">{headerText} </div>
                                     {transactions.map((transaction, index) => (
                                         <div key={index} className="flex justify-between items-center py-2">
-                                            <div className="text-2xl w-10 rounded mr-4  h-8" style={{ backgroundColor: generateRandomColor() }}></div>
+                                            <div className="text-2xl w-10 rounded mr-4 h-8" style={{ backgroundColor: generateRandomColor() }}></div>
                                             <div className="basis-4/6">
                                                 <div className="text-base" >{transaction.note}</div>
                                                 <div className="text-xs text-gray-400">{transaction.need} </div>
                                             </div>
 
-                                            <div className="text-sm text-right mr-2 basis-2/6">-₹{transaction.amount}.00</div>
+                                            <div className="text-sm text-right mr-2 basis-2/6">-₹{transaction.amount}</div>
 
                                             <div onClick={() => { (window.location.href = `/editExpense/${transaction.id}`), handleUpdate(transaction.id) }} className={` mx-4 rounded-md cursor-pointer border-2 border-transparent duration-300 hover:border-green-600 ${isUpdated === transaction.id ? 'bg-green-500 ' : 'bg-transparent-300'}`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 24 24" id="edit"><g data-name="Layer 2"><path fill="white" d="M19 20H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zM5 18h.09l4.17-.38a2 2 0 0 0 1.21-.57l9-9a1.92 1.92 0 0 0-.07-2.71L16.66 2.6A2 2 0 0 0 14 2.53l-9 9a2 2 0 0 0-.57 1.21L4 16.91a1 1 0 0 0 .29.8A1 1 0 0 0 5 18zM15.27 4 18 6.73l-2 1.95L13.32 6zm-8.9 8.91L12 7.32l2.7 2.7-5.6 5.6-3 .28z" data-name="edit-2"></path></g></svg>
