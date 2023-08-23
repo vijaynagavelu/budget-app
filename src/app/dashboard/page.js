@@ -242,12 +242,12 @@ export default function Home() {
 
     if (!filteredList) {
         return (
-            <div className='flex justify-center h-full items-center text-center '>
-                <Image priority={true} className="emoji"
-                    width={100}
-                    height={100}
-                    alt="sry"
-                    src="https://media.tenor.com/UnFx-k_lSckAAAAC/amalie-steiness.gif" />
+            <div class="h-screen w-screen flex items-center justify-center backdrop-blur-xl">
+                <div class="absolute inset-0 bg-blue opacity-50 backdrop-blur-xl" ></div>
+                <div class="z-10 relative p-6 bg-wite shadow-md rounded-md backdrop-blur-xl">
+                    <h1 class="text-2xl font-semibold mb-4 backdrop-blur-xl">Black Transparent Layer Example</h1>
+                    <p>This is an example of a black transparent layer created using Tailwind CSS.</p>
+                </div>
             </div>
         )
     }
@@ -422,10 +422,10 @@ export default function Home() {
     }
 
     return (
-        <main className="flex justify-center">
+        <main className="flex justify-center ">
             <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
 
-                <div className="topPortion">
+                <div className="topPortion backdrop-blur-xl">
                     <div className=" flex flex-row items-end bg-black border-b border-slate-500 sticky py-2 top-0 z-50">
                         <div className="relative inline-block text-black">
                             <button

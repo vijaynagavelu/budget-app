@@ -21,13 +21,13 @@ export default function Home() {
 
     const firstDayOfMonth = useCallback(async () => {
         const currentDate = new Date(); // Current date and time
-        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 2);
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
         setCreatedAt(convertToEpoch(firstDayOfMonth));
     }, [])
 
     const currentDayOfMonth = useCallback(async () => {
         const currentDate = new Date(); // Current date and time
-        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, temp, currentDate.getHours());
+        const currentDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), temp, currentDate.getHours());
         setUpdatedAt(convertToEpoch(currentDayOfMonth));
     }, [temp])
 
@@ -106,7 +106,7 @@ export default function Home() {
                     </Link>
                 </div>
 
-                <div className=" mb-2 pt-10  text-sm">July Date</div>
+                <div className=" mb-2 pt-10  text-sm">August Date</div>
                 <div className="flex h-10 w-8">
                     <input type="number" onChange={(e) => { setTemp(e.target.value) }} className='text-white grow bg-transparent border-2 border-[#E3EBFD] rounded-md text-base  font-semibold p-3' placeholder="" value={temp} ></input>
                 </div>
