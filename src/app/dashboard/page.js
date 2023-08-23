@@ -47,8 +47,8 @@ export default function Home() {
         }, 2000);
     };
 
-    const handleUpdate = () => {
-        setIsUpdated(true);
+    const handleUpdate = (id) => {
+        setIsUpdated(id);
         setTimeout(() => {
             setIsUpdated(false);
         }, 2000);
@@ -156,6 +156,10 @@ export default function Home() {
     }, [calendar, filter, startDate, token]);
 
     const deleteData = useCallback(async (id) => {
+        if (!token) {
+            return;
+        }
+        handleDelete(id);
         try {
             const response = await fetch(`/api/editExpense?id=${id}&`, {
                 headers: {
@@ -170,7 +174,6 @@ export default function Home() {
             }
             const result = await response.json();
             console.log("Success:", result);
-            handleDelete(id);
             getList();
         } catch (error) {
             console.error("Error deleting data:", error);
@@ -215,6 +218,7 @@ export default function Home() {
         if (!token) {
             return;
         }
+        setFilteredList(false);
         try {
             const response = await fetch(`/api/addExpense?date=${startDate}&`, {
                 headers: {
@@ -275,7 +279,6 @@ export default function Home() {
     useEffect(() => {
         firstDayOfMonth(new Date());
     }, [])
-
 
 
     if (!filteredList) {
@@ -355,14 +358,14 @@ export default function Home() {
                         </div>
                         <div>₹{numToString(nonessentialsSpent)} of ₹{numToString(parseInteger(nonessentialsShare))}</div>
 
-                        <div className="mt-8 m-auto w-40 border-b border-b-gray-400"></div>
+                        <div className=" mt-8 m-auto w-40 border-b border-b-gray-400"></div>
 
                     </div>
 
 
                     <div className="footer">
                         <div className="flex  justify-between w-full pt-6">
-                            <div className=" text-lg mb-2">Transactions </div>
+                            <div className=" text-lg mb-2">Transactions ggggggggg </div>
 
                             <div className="flex" onChange={(e) => { setFilter([e.target.value]) }} >
                                 <select className="text-white bg-transparent border-2 cursor-pointer border-gray-500 text-base font-medium grow rounded-md h-8 w-12">
@@ -373,16 +376,13 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2 w-full mb-4">
-                            {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
-                            {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}> {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
+                        <div className="flex h-56 items-center gap-2 w-full mb-4">
+                            <div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div>
 
                             <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
                                 <span className="text-white font-normal text-xs">clear date</span>
                             </button>
                         </div>
-
-                        <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
 
                     </div>
                 </div>
@@ -419,13 +419,13 @@ export default function Home() {
                                     ☰
                                 </button>
                                 {isDropdownOpen && (
-                                    <div className="absolute cursor-pointer text-white left-1  right-0 mt-2 border-l border-t border-l-gray-300  rounded-md">
+                                    <div className="absolute cursor-pointer text-white left-1  right-0 mt-2 rounded-md">
                                         <ul className="">
                                             <Link href="/addExpense">
-                                                <li className="hover:bg-gray-100 w-28 hover:text-black py-1 px-1 rounded-md">Add Expense</li>
+                                                <li className="bg-gray-100 w-28 text-black py-1 px-1 rounded-md">Add Expense</li>
                                             </Link>
                                             <Link href="/">
-                                                <li onClick={logOut} className="hover:bg-gray-100 w-20 hover:text-black py-1 px-1 rounded-md">Logout</li>
+                                                <li onClick={logOut} className="bg-gray-100 w-20 text-black py-1 px-1 rounded-md">Logout</li>
                                             </Link>
                                         </ul>
                                     </div>
@@ -573,14 +573,13 @@ export default function Home() {
                                 ☰
                             </button>
                             {isDropdownOpen && (
-                                <div className="absolute cursor-pointer text-white left-1  right-0 mt-2 border-l border-t border-l-gray-300  rounded-md">
-                                    {/* Dropdown content goes here */}
+                                <div className="absolute cursor-pointer text-white left-1  right-0 mt-2  rounded-md">
                                     <ul className="">
                                         <Link href="/addExpense">
-                                            <li className="hover:bg-gray-100 w-28 hover:text-black py-1 px-1 rounded-md">Add Expense</li>
+                                            <li className="bg-gray-100 w-28 text-black py-1 px-1 rounded-md">Add Expense</li>
                                         </Link>
                                         <Link href="/">
-                                            <li onClick={logOut} className="hover:bg-gray-100 w-20 hover:text-black py-1 px-1 rounded-md">Logout</li>
+                                            <li onClick={logOut} className="bg-gray-100 w-20 text-black py-1 px-1 rounded-md">Logout</li>
                                         </Link>
                                     </ul>
                                 </div>
@@ -734,7 +733,7 @@ export default function Home() {
 
                                             <div className="text-sm text-right mr-2 basis-2/6">-₹{transaction.amount}.00</div>
 
-                                            <div onClick={() => { (window.location.href = `/ editExpense / ${transaction.id}`, handleUpdate()) }} className={` mx-4 rounded-md cursor-pointer border-2 border-transparent duration-300 hover:border-green-600 ${isUpdated ? 'bg-green-500 ' : 'bg-transparent-300'}`}>
+                                            <div onClick={() => { (window.location.href = `/editExpense/${transaction.id}`), handleUpdate(transaction.id) }} className={` mx-4 rounded-md cursor-pointer border-2 border-transparent duration-300 hover:border-green-600 ${isUpdated === transaction.id ? 'bg-green-500 ' : 'bg-transparent-300'}`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 24 24" id="edit"><g data-name="Layer 2"><path fill="white" d="M19 20H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zM5 18h.09l4.17-.38a2 2 0 0 0 1.21-.57l9-9a1.92 1.92 0 0 0-.07-2.71L16.66 2.6A2 2 0 0 0 14 2.53l-9 9a2 2 0 0 0-.57 1.21L4 16.91a1 1 0 0 0 .29.8A1 1 0 0 0 5 18zM15.27 4 18 6.73l-2 1.95L13.32 6zm-8.9 8.91L12 7.32l2.7 2.7-5.6 5.6-3 .28z" data-name="edit-2"></path></g></svg>
                                             </div>
 
