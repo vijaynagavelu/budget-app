@@ -538,10 +538,11 @@ export default function Home() {
                                                 <div className="text-xs text-gray-400">{transaction.need} </div>
                                             </div>
 
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 24 24" id="edit"><g data-name="Layer 2"><path fill="white" d="M19 20H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zM5 18h.09l4.17-.38a2 2 0 0 0 1.21-.57l9-9a1.92 1.92 0 0 0-.07-2.71L16.66 2.6A2 2 0 0 0 14 2.53l-9 9a2 2 0 0 0-.57 1.21L4 16.91a1 1 0 0 0 .29.8A1 1 0 0 0 5 18zM15.27 4 18 6.73l-2 1.95L13.32 6zm-8.9 8.91L12 7.32l2.7 2.7-5.6 5.6-3 .28z" data-name="edit-2"></path></g></svg>
 
 
                                             <div onClick={() => { (window.location.href = `/editExpense/${transaction.id}`) }} className="pr-2 border-b-2 w-4 border-white cursor-pointer">
-                                                <svg className="-mb-1" xmlns="http://www.w3.org/2000/svg" width="20" height="22" id="edit"><path fill="white" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m12 1 4 4L5 16H1v-4zM1 21h18"></path></svg>
+                                                <svg className="-mb-1" xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 32 32" id="edit"><path fill="white" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m12 1 4 4L5 16H1v-4zM1 21h18"></path></svg>
                                             </div>
 
                                             <div onClick={() => { (window.location.href = `/editExpense/${transaction.id}`) }} className="pr-2 w-4 cursor-pointer">

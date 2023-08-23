@@ -15,9 +15,7 @@ body {
   font-family: 'Roboto';
   color: rgb(var(--foreground-rgb));
   height: 100vh;
-  background: linear-gradient(to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  background: black;
 }
 
 .piechartInput::-webkit-outer-spin-button,
