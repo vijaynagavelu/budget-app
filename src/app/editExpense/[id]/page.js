@@ -190,13 +190,13 @@ export default function Home({ params }) {
 
 
                 <div className="flex flex-col grow justify-end" >
-                    <button
-                        onClick={() => deleteData({ "need": need, "note": note, "amount": amount })}
+                    {/* <button
+                        onClick={() => deleteData()}
                         className={`transition-colors mb-2 border-2 border-[#E3EBFD] duration-300 ${isDeleted ? 'bg-red-500 text-white' : 'bg-transparent-300 text-transparent-700'
                             } hover:bg-red-600 hover:border-transparent hover:text-white px-4 py-2 rounded-md`}
                     >
                         {isDeleted ? 'Deleted ✘  ' : 'Delete'}
-                    </button>
+                    </button> */}
 
                     <button
                         onClick={() => updateData({ "need": need, "note": note, "amount": amount })}
