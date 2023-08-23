@@ -384,16 +384,6 @@ export default function Home() {
                         </div>
 
                         <div className="text-sm px-2 mt-2 text-gray-400">Today </div>
-
-                        <div className="flex justify-between items-center py-2">
-                            <div className="text-2xl  ">🍜</div>
-                            <div className="basis-3/5">
-                                <div className="text-base" >Weekend dinner</div>
-                                <div className="text-xs text-gray-400">Eat out</div>
-                            </div>
-                            <div className="text-sm ">-₹980.00</div>
-                        </div>
-
                     </div>
                 </div>
             </main>
