@@ -524,21 +524,10 @@ export default function Home() {
         return acc;
     }, {});
 
-    function originalWord(word) {
-        let word1 = "Aug 10";
-        const charactersArray = word1.split("");
-        const reconstructedWord = charactersArray.join("");
-        console.log(reconstructedWord);
-        return reconstructedWord;
-    }
-
-
-
-
     function formatDate(date) {
         const options = { month: 'short', day: 'numeric' };
         const stringedDate = (new Date(date).toLocaleDateString('en-US', options)).toString();
-        return originalWord(stringedDate);
+        return stringedDate;
     }
 
     // function formatDate(date) {
