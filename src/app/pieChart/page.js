@@ -59,10 +59,11 @@ export default function Home() {
             console.log("Fetched data:", parsedResult);
             if (parsedResult && parsedResult[0].essentials) {
                 setEssentialsData(parsedResult[0].essentials);
+                setSalary(parsedResult[0].salary);
+            } else {
+                console.log("No data");
                 setTimeout(() => { setFetched(true) }, 1000);
             }
-            setSalary(parsedResult[0].salary);
-            setTimeout(() => { setFetched(true) }, 1000);
         } catch (error) {
             console.error("Error fetching data:", error);
             setTimeout(() => { setFetched(true) }, 1000);
@@ -195,8 +196,6 @@ export default function Home() {
                 <div className=" mb-2 text-sm">
                     The 50-30-20 model is widly adopted, but you can set your own goal too
                 </div>
-
-
 
 
                 <div className="flex justify-center">
