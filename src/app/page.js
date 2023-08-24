@@ -15,6 +15,7 @@ export default function Home() {
     const authUser = useFirebaseAuthentication();
     const [email, setEmail] = useState('paul@gmail.com');
     const [password, setPassword] = useState('123456');
+    const [isFetched, setFetched] = useState(true);
 
 
     useEffect(() => {
@@ -48,6 +49,7 @@ export default function Home() {
             return;
         }
         console.log("Fetching data...");
+        setFetched(false);
         try {
             const response = await fetch(`/api/salary`, {
                 headers: {
@@ -62,9 +64,11 @@ export default function Home() {
             }
             const result = await response.json();
             setAuthenticatedUser(result);
+            setTimeout(() => { setFetched(true) }, 1000);
             //console.log(result);
         } catch (error) {
             console.error("Error fetching data:", error);
+            setTimeout(() => { setFetched(true) }, 1000);
         }
     }, [token]);
 
@@ -79,7 +83,7 @@ export default function Home() {
         fetchData();
     }, [authUser, fetchData])
 
-    if (!authenticatedUser) {
+    if (isFetched) {
         return (
             <main className="flex h-full  justify-center">
 

@@ -67,14 +67,14 @@ export default function Home() {
             //console.log(parsedResult)
             if (parsedResult[0] && parsedResult[0].salary) {
                 setSalary(parsedResult[0].salary);
+                setTimeout(() => { setFetched(true) }, 1000);
             } else {
                 console.log("No data");
+                setTimeout(() => { setFetched(true) }, 1000);
             }
         } catch (error) {
             console.error("Error fetching data:", error);
-        } finally {
-            setFetched(true);
-            console.log("fetched true")
+            setTimeout(() => { setFetched(true) }, 1000);
         }
     }, [token]);
 

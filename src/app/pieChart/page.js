@@ -59,13 +59,12 @@ export default function Home() {
             console.log("Fetched data:", parsedResult);
             if (parsedResult && parsedResult[0].essentials) {
                 setEssentialsData(parsedResult[0].essentials);
+                setTimeout(() => { setFetched(true) }, 1000);
             }
             setSalary(parsedResult[0].salary);
         } catch (error) {
             console.error("Error fetching data:", error);
-        } finally {
-            setFetched(true);
-            console.log("fetched true")
+            setTimeout(() => { setFetched(true) }, 1000);
         }
     }, [token]);
 
