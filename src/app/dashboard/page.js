@@ -526,14 +526,14 @@ export default function Home() {
         return acc;
     }, {});
 
-    // function formatDate(date) {
-    //     const options = { month: 'short', day: 'numeric' };
-    //     return new Date(date).toLocaleDateString('en-US', options);
-    // }
-
     function formatDate(date) {
-        return format(new Date(date), 'MMM d');
+        const options = { month: 'short', day: 'numeric' };
+        return new Date(date).toLocaleDateString('en-US', options);
     }
+
+    // function formatDate(date) {
+    //     return format(new Date(date), 'MMM d');
+    // }
 
     function getHeaderText(date) {
         const currentDate = new Date();
