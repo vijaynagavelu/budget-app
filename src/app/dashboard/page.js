@@ -525,7 +525,7 @@ export default function Home() {
     }, {});
 
     function originalWord(word) {
-        const charactersArray = originalWord.split("");
+        const charactersArray = word.split("");
         const reconstructedWord = charactersArray.join("");
         console.log(reconstructedWord);
         return reconstructedWord;
