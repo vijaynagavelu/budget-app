@@ -8,7 +8,6 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { DateTime } from "luxon";
 
 
 export default function Home() {
@@ -525,47 +524,28 @@ export default function Home() {
     }, {});
 
     function formatDate(date) {
-        // const options = { month: 'short', day: 'numeric' };
-        // const stringedDate = (new Date(date).toLocaleDateString('en-US', options)).toString();
-        // return stringedDate;
-        const parsedDate = new Date(date);
-        const month = parsedDate.toLocaleString('en-US', { month: 'short' });
-        const day = parsedDate.getDate();
-        console.log(`${month} ${day}`)
-        return `${month} ${day}`;
+        const options = { month: 'short', day: 'numeric' };
+        const stringedDate = new Date(date).toLocaleDateString('en-US', options);
+        return stringedDate;
     }
 
 
-
-    // function getHeaderText(date) {
-    //     const currentDate = new Date();
-    //     const yesterday = new Date(currentDate);
-    //     yesterday.setDate(currentDate.getDate() - 1);
-
-    //     const parsedDate = new Date(date);
-    //     if (parsedDate.toDateString() === currentDate.toDateString()) {
-    //         return 'Today';
-    //     } else if (parsedDate.toDateString() === yesterday.toDateString()) {
-    //         return 'Yesterday';
-    //     } else {
-    //         return formatDate(date);
-    //     }
-    // }
 
     function getHeaderText(date) {
-        const currentDate = DateTime.now();
-        const yesterday = currentDate.minus({ days: 1 });
+        const currentDate = new Date();
+        const yesterday = new Date(currentDate);
+        yesterday.setDate(currentDate.getDate() - 1);
 
-        const parsedDate = DateTime.fromJSDate(new Date(date));
-
-        if (parsedDate.hasSame(currentDate, 'day')) {
+        const parsedDate = new Date(date);
+        if (parsedDate.toDateString() === currentDate.toDateString()) {
             return 'Today';
-        } else if (parsedDate.hasSame(yesterday, 'day')) {
+        } else if (parsedDate.toDateString() === yesterday.toDateString()) {
             return 'Yesterday';
         } else {
-            return parsedDate.toFormat('d MMM yyyy');
+            return formatDate(date);
         }
     }
+
 
     return (
         <main className="flex justify-center ">
