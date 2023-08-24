@@ -530,7 +530,7 @@ export default function Home() {
         const options = { month: 'short', day: 'numeric' };
         const stringedDate = (new Date(date).toLocaleDateString('en-US', options)).toString();
         //console.log(stringedDate);
-        return stringedDate;
+        return "aug 1";
         return new Date(date).toLocaleDateString('en-US', options);
     }
 
