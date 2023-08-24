@@ -8,6 +8,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 
 
 export default function Home() {
@@ -525,9 +526,13 @@ export default function Home() {
         return acc;
     }, {});
 
+    // function formatDate(date) {
+    //     const options = { month: 'short', day: 'numeric' };
+    //     return new Date(date).toLocaleDateString('en-US', options);
+    // }
+
     function formatDate(date) {
-        const options = { month: 'short', day: 'numeric' };
-        return new Date(date).toLocaleDateString('en-US', options);
+        return format(new Date(date), 'MMM d');
     }
 
     function getHeaderText(date) {
