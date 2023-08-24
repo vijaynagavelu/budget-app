@@ -529,9 +529,9 @@ export default function Home() {
     function formatDate(date) {
         const options = { month: 'short', day: 'numeric' };
         const stringedDate = (new Date(date).toLocaleDateString('en-US', options)).toString();
-        //console.log(stringedDate);
-        return "aug 1";
-        return new Date(date).toLocaleDateString('en-US', options);
+        console.log(stringedDate, typeof (stringedDate));
+        return stringedDate;
+        //return new Date(date).toLocaleDateString('en-US', options);
     }
 
     // function formatDate(date) {
@@ -549,6 +549,7 @@ export default function Home() {
         } else if (parsedDate.toDateString() === yesterday.toDateString()) {
             return 'Yesterday';
         } else {
+            console.log(typeof (formatDate(date)));
             return formatDate(date);
         }
     }
