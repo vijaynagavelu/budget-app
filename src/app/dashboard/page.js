@@ -382,8 +382,6 @@ export default function Home() {
                                 <span className="text-white font-normal text-xs">clear date</span>
                             </button>
                         </div>
-
-                        <div className="text-sm px-2 mt-2 text-gray-400">Today </div>
                     </div>
                 </div>
             </main>
@@ -526,12 +524,20 @@ export default function Home() {
         return acc;
     }, {});
 
+    function originalWord(word) {
+        const charactersArray = originalWord.split("");
+        const reconstructedWord = charactersArray.join("");
+        console.log(reconstructedWord);
+        return reconstructedWord;
+    }
+
+
+
+
     function formatDate(date) {
         const options = { month: 'short', day: 'numeric' };
         const stringedDate = (new Date(date).toLocaleDateString('en-US', options)).toString();
-        console.log(stringedDate, typeof (stringedDate));
-        return stringedDate;
-        //return new Date(date).toLocaleDateString('en-US', options);
+        return originalWord(stringedDate);
     }
 
     // function formatDate(date) {
