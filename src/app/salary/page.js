@@ -12,8 +12,8 @@ export default function Home() {
     const [salary, setSalary] = useState("");
     const [timer, setTimer] = useState(0);
     const authUser = useFirebaseAuthentication();
+    const [isFetched, setFetched] = useState(false);
 
-    setTimeout(() => setTimer(1), 3000)
 
     function parseInteger(int) {
         if (int) {
@@ -72,6 +72,9 @@ export default function Home() {
             }
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
+            setFetched(true);
+            console.log("fetched true")
         }
     }, [token]);
 
@@ -93,7 +96,7 @@ export default function Home() {
     }, [salary]);
 
 
-    if (!timer) {
+    if (!isFetched) {
         return (
             <div className='flex justify-center h-full items-center text-center '>
                 <Image priority={true} className="emoji"

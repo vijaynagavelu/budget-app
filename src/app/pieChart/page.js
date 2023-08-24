@@ -24,9 +24,8 @@ export default function Home() {
     const [token, setToken] = useState('');
     const [error, setError] = useState(false);
     const [essentialsData, setEssentialsData] = useState('');
-    const [timer, setTimer] = useState('');
+    const [isFetched, setFetched] = useState(false);
 
-    setTimeout(() => setTimer(1), 3000)
 
     function parseInteger(int) {
         //console.log(int);
@@ -64,6 +63,9 @@ export default function Home() {
             setSalary(parsedResult[0].salary);
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
+            setFetched(true);
+            console.log("fetched true")
         }
     }, [token]);
 
@@ -155,7 +157,7 @@ export default function Home() {
     }, [essentialsData]);
 
 
-    if (!timer) {
+    if (!isFetched) {
         return (
             <div className='flex justify-center h-full items-center text-center '>
                 <Image priority={true} className="emoji"
