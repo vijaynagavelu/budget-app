@@ -525,9 +525,13 @@ export default function Home() {
     }, {});
 
     function formatDate(date) {
-        const options = { month: 'short', day: 'numeric' };
-        const stringedDate = (new Date(date).toLocaleDateString('en-US', options)).toString();
-        return stringedDate;
+        // const options = { month: 'short', day: 'numeric' };
+        // const stringedDate = (new Date(date).toLocaleDateString('en-US', options)).toString();
+        // return stringedDate;
+        const parsedDate = new Date(date);
+        const month = parsedDate.toLocaleString('en-US', { month: 'short' });
+        const day = parsedDate.getDate();
+        return `${month} ${day}`;
     }
 
     // function formatDate(date) {
