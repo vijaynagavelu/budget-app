@@ -525,7 +525,8 @@ export default function Home() {
     }, {});
 
     function originalWord(word) {
-        const charactersArray = word.split("");
+        let word1 = "Aug 10";
+        const charactersArray = word1.split("");
         const reconstructedWord = charactersArray.join("");
         console.log(reconstructedWord);
         return reconstructedWord;
