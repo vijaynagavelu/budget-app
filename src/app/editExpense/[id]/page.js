@@ -84,6 +84,7 @@ export default function Home({ params }) {
             console.log("Success:", result);
             handleUpdate();
             setError(false);
+            window.location.href = '/dashboard';
         } catch (error) {
             console.error("Error updating data:", error);
             setError(true);
