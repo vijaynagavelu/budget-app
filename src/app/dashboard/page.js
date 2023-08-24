@@ -563,7 +563,7 @@ export default function Home() {
         } else if (parsedDate.hasSame(yesterday, 'day')) {
             return 'Yesterday';
         } else {
-            return parsedDate.toFormat('MMMM dd YYYY');
+            return parsedDate.toFormat('d MMM ');
         }
     }
 
