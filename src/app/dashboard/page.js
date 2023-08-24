@@ -8,7 +8,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { DateTime } from "luxon";
 
 
 export default function Home() {
@@ -531,26 +531,39 @@ export default function Home() {
         const parsedDate = new Date(date);
         const month = parsedDate.toLocaleString('en-US', { month: 'short' });
         const day = parsedDate.getDate();
+        console.log(`${month} ${day}`)
         return `${month} ${day}`;
     }
 
-    // function formatDate(date) {
-    //     return format(new Date(date), 'MMM d');
+
+
+    // function getHeaderText(date) {
+    //     const currentDate = new Date();
+    //     const yesterday = new Date(currentDate);
+    //     yesterday.setDate(currentDate.getDate() - 1);
+
+    //     const parsedDate = new Date(date);
+    //     if (parsedDate.toDateString() === currentDate.toDateString()) {
+    //         return 'Today';
+    //     } else if (parsedDate.toDateString() === yesterday.toDateString()) {
+    //         return 'Yesterday';
+    //     } else {
+    //         return formatDate(date);
+    //     }
     // }
 
     function getHeaderText(date) {
-        const currentDate = new Date();
-        const yesterday = new Date(currentDate);
-        yesterday.setDate(currentDate.getDate() - 1);
+        const currentDate = DateTime.now();
+        const yesterday = currentDate.minus({ days: 1 });
 
-        const parsedDate = new Date(date);
-        if (parsedDate.toDateString() === currentDate.toDateString()) {
+        const parsedDate = DateTime.fromJSDate(new Date(date));
+
+        if (parsedDate.hasSame(currentDate, 'day')) {
             return 'Today';
-        } else if (parsedDate.toDateString() === yesterday.toDateString()) {
+        } else if (parsedDate.hasSame(yesterday, 'day')) {
             return 'Yesterday';
         } else {
-            console.log(typeof (formatDate(date)));
-            return formatDate(date);
+            return parsedDate.toFormat('MMM d');
         }
     }
 
