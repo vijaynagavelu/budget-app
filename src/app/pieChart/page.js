@@ -23,10 +23,10 @@ export default function Home() {
     const [salary, setSalary] = useState("");
     const [token, setToken] = useState('');
     const [error, setError] = useState(false);
-    const [data, setData] = useState('');
+    const [essentialsData, setEssentialsData] = useState('');
     const [timer, setTimer] = useState('');
 
-    setTimeout(() => setTimer(1), 6000)
+    setTimeout(() => setTimer(1), 3000)
 
     function parseInteger(int) {
         //console.log(int);
@@ -59,7 +59,7 @@ export default function Home() {
             const parsedResult = JSON.parse(result.result);
             console.log("Fetched data:", parsedResult);
             if (parsedResult && parsedResult[0].essentials) {
-                setData(parsedResult[0].essentials);
+                setEssentialsData(parsedResult[0].essentials);
             }
             setSalary(parsedResult[0].salary);
         } catch (error) {
@@ -149,10 +149,10 @@ export default function Home() {
     }, [budgetRatio]);
 
     useEffect(() => {
-        if (data) {
+        if (essentialsData) {
             window.location.href = '/addExpense';
         }
-    }, [data]);
+    }, [essentialsData]);
 
 
     if (!timer) {
@@ -176,7 +176,6 @@ export default function Home() {
                         <button className='py-2 underline w-full text-indigo-700 rounded-md'>&#9664;  Go to salary page   </button>
                     </Link>
                 </div>
-
             </main >
         )
     }

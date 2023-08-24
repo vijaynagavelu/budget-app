@@ -79,6 +79,17 @@ export default function Home() {
         fetchData();
     }, [authUser, fetchData])
 
+    if (authenticatedUser) {
+        return (
+            <div className='flex justify-center h-full items-center text-center '>
+                <Image priority={true} className="emoji"
+                    width={100}
+                    height={100}
+                    alt="sry"
+                    src="https://media.tenor.com/UnFx-k_lSckAAAAC/amalie-steiness.gif" />
+            </div>
+        )
+    }
 
     return (
         <main className="flex h-full  justify-center">

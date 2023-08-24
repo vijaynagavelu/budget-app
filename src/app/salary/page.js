@@ -13,7 +13,6 @@ export default function Home() {
     const [timer, setTimer] = useState(0);
     const authUser = useFirebaseAuthentication();
 
-
     setTimeout(() => setTimer(1), 3000)
 
     function parseInteger(int) {
@@ -94,55 +93,56 @@ export default function Home() {
     }, [salary]);
 
 
-    if (timer) {
+    if (!timer) {
         return (
-            <main className="flex justify-center">
-
-                <div className="flex min-h-screen max-w-xl justify-center  flex-col  p-6">
-                    <div className=" absolute  top-0 left-0  text-2xl  pt-6 pl-6">
-                        Budgetry
-                    </div>
-                    <div className=" text-xl font-semibold  mb-2  w-100">
-                        Enter your current monthly salary
-                    </div>
-                    <div className=" mb-12 text-sm">
-                        The total income you incur regularly
-                    </div>
-
-
-                    <input type="text" onChange={(e) => {
-                        setName(e.target.value)
-                    }} className='text-black pl-5  text-base p-1 font-semibold w-full' placeholder=" Enter name" >
-                    </input>
-
-                    <br></br>
-
-                    <div className="flex mb-8 ">
-                        <select name="currencies " className="text-black border-black text-base p-3 font-medium w-36 " id="cars">
-                            <option >INR (₹)</option>
-                            <option >€</option>
-                            <option>A$</option>
-                            <option>MYR</option>
-                        </select>
-
-                        <input type="text" onChange={(e) => {
-                            setInputSalary(e.target.value)
-                        }} className='text-black  text-base p-1 font-semibold w-full' placeholder="0" value={parseInteger(inputSalary)}></input>
-                    </div>
-
-                    <button onClick={() => postData({ "email": email, "name": name, "salary": inputSalary })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
-                </div>
-            </main >
+            <div className='flex justify-center h-full items-center text-center '>
+                <Image priority={true} className="emoji"
+                    width={100}
+                    height={100}
+                    alt="sry"
+                    src="https://media.tenor.com/UnFx-k_lSckAAAAC/amalie-steiness.gif" />
+            </div>
         )
     }
 
     return (
-        <div className='flex justify-center h-full items-center text-center '>
-            <Image priority={true} className="emoji"
-                width={100}
-                height={100}
-                alt="sry"
-                src="https://media.tenor.com/UnFx-k_lSckAAAAC/amalie-steiness.gif" />
-        </div>
+        <main className="flex justify-center">
+
+            <div className="flex min-h-screen max-w-xl justify-center  flex-col  p-6">
+                <div className=" absolute  top-0 left-0  text-2xl  pt-6 pl-6">
+                    Budgetry
+                </div>
+                <div className=" text-xl font-semibold  mb-2  w-100">
+                    Enter your current monthly salary
+                </div>
+                <div className=" mb-12 text-sm">
+                    The total income you incur regularly
+                </div>
+
+
+                <input type="text" onChange={(e) => {
+                    setName(e.target.value)
+                }} className='text-black pl-5  text-base p-1 font-semibold w-full' placeholder=" Enter name" >
+                </input>
+
+                <br></br>
+
+                <div className="flex mb-8 ">
+                    <select name="currencies " className="text-black border-black text-base p-3 font-medium w-36 " id="cars">
+                        <option >INR (₹)</option>
+                        <option >€</option>
+                        <option>A$</option>
+                        <option>MYR</option>
+                    </select>
+
+                    <input type="text" onChange={(e) => {
+                        setInputSalary(e.target.value)
+                    }} className='text-black  text-base p-1 font-semibold w-full' placeholder="0" value={parseInteger(inputSalary)}></input>
+                </div>
+
+                <button onClick={() => postData({ "email": email, "name": name, "salary": inputSalary })} className='py-2 bg-indigo-600 w-full rounded-md'> Next -&gt;  </button>
+            </div>
+        </main >
     )
+
 }

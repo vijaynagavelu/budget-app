@@ -390,20 +390,6 @@ export default function Home() {
         )
     }
 
-    if (!salary) {
-        return (
-            <main className="flex items-center justify-center h-screen">
-                <div>
-                    <div>Salary is not entered</div>
-                    <Link href="/">
-                        <button className='py-2 underline w-full text-indigo-700 rounded-md'>&#9664;  Go to salary page   </button>
-                    </Link>
-                </div>
-
-            </main >
-        )
-    }
-
     if (!filteredList.length) {
         return (
             <main className="flex justify-center">
