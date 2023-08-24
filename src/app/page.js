@@ -63,9 +63,12 @@ export default function Home() {
                 return;
             }
             const result = await response.json();
-            setAuthenticatedUser(result);
-            setTimeout(() => { setFetched(true) }, 1000);
-            //console.log(result);
+            if (result) {
+                setAuthenticatedUser(result);
+            } else {
+                console.log("No data");
+                setTimeout(() => { setFetched(true) }, 1000);
+            }
         } catch (error) {
             console.error("Error fetching data:", error);
             setTimeout(() => { setFetched(true) }, 1000);
