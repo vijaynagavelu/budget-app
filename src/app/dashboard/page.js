@@ -703,7 +703,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className={`list ${!effect ? 'hidden' : ''}`}>
+                    <div className={`list ${!effect ? 'hidden' : ''} h-72`}>
                         {Object.entries(transactionsByDate).map(([date, transactions]) => {
                             const headerText = getHeaderText(date);
                             return (

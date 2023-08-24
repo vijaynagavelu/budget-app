@@ -150,8 +150,6 @@ export default function Home({ params }) {
         )
     }
 
-
-
     return (
         <main className="flex justify-center">
             <div className="flex min-h-screen flex-col w-full max-w-lg px-10 pt-20 pb-4" >
