@@ -57,13 +57,11 @@ export default function Home() {
             const result = await response.json();
             const parsedResult = JSON.parse(result.result);
             console.log("Fetched data:", parsedResult);
+            setSalary(parsedResult[0].salary);
             if (parsedResult && parsedResult[0].essentials) {
                 setEssentialsData(parsedResult[0].essentials);
             }
-            if (parsedResult && parsedResult[0].salary) {
-                setSalary(parsedResult[0].salary);
-                setFetched(true);
-            } else {
+            else {
                 console.log("No data");
                 setFetched(true);
             }
