@@ -121,16 +121,17 @@ export default function Home() {
                     The total income you incur regularly
                 </div>
 
-
+                <label className=" mb-2 pt-4  text-sm">Enter Name</label>
                 <input type="text" onChange={(e) => {
                     setName(e.target.value)
-                }} className='text-black pl-5  text-base p-1 font-semibold w-full' placeholder=" Enter name" >
+                }} className='text-black pl-1  text-base p-1 font-semibold w-full' placeholder=" Enter name" >
                 </input>
 
                 <br></br>
 
-                <div className="flex mb-8 ">
-                    <select name="currencies " className="text-black border-black text-base p-3 font-medium w-36 " id="cars">
+                <label className=" mb-2  text-sm">Enter Salary</label>
+                <div className="flex mb-8 h-8">
+                    <select name="currencies " className="text-black border-black text-base pl-1 font-medium w-36 " id="cars">
                         <option >INR (₹)</option>
                         <option >€</option>
                         <option>A$</option>

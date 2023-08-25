@@ -8,6 +8,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { Nav } from "@/utils/Nav";
 
 
 export default function Home() {
@@ -20,6 +21,10 @@ export default function Home() {
     const [startDate, setStartDate] = useState(new Date());
     const [calendar, setCalendar] = useState(null);
     const [showCalendar, setShowCalendar] = useState(false);
+    const [minDate, setMinDate] = useState('');
+    const [maxDate, setMaxDate] = useState('');
+    const [initialDisplayDate, setInitialDisplayDate] = useState('');
+
 
     const [spent, setSpent] = useState(0);
     const [essentialsSpent, setEssentialsSpent] = useState(0);
@@ -37,6 +42,24 @@ export default function Home() {
     const [isDeleted, setIsDeleted] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
     const [effect, setEffect] = useState(true);
+
+    const isDateDisabled = () => true;
+
+    //@todo
+    //salary page label
+    //dashboard child component
+    //more option dashboard page
+    //date modify show hidden display pick date
+    //floating action button google compose
+    //filter page all dropdown
+    //edit page set timeout remove
+    //calender
+    //days left
+    //go to login page          approval needed???
+
+
+    //@Pending points
+    //dashboard child component
 
 
     const handleDelete = (id) => {
@@ -89,6 +112,13 @@ export default function Home() {
     }
 
     function daysRemainingInMonth() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+
+        if (startDate.getMonth() !== currentMonth || startDate.getFullYear() !== currentYear) {
+            return '';
+        }
         const today = new Date();
         const year = today.getFullYear();
         const month = today.getMonth();
@@ -113,9 +143,17 @@ export default function Home() {
     }
 
     function firstDayOfMonth(date) {
+        console.log("datefunction");
         const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         setStartDate(firstDayOfMonth);
-        //console.log(firstDayOfMonth);
+
+        const currentDate = new Date(date);
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        setMinDate(startOfMonth);
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        setMaxDate(endOfMonth);
+
+        setInitialDisplayDate(new Date(date.getFullYear(), date.getMonth(), date.getDate()));
     }
 
     function getMonthName(monthIndex) {
@@ -148,11 +186,41 @@ export default function Home() {
             const reversedList = parsedResult.reverse();
             setEffect(true);
             setFilteredList(reversedList);
-            console.log("FilteredList:", reversedList);
+            //console.log("FilteredList:", reversedList);
         } catch (error) {
             console.error("Error fetching or processing data:", error);
         }
     }, [calendar, filter, startDate, token]);
+
+    const getAmount = useCallback(async () => {
+        if (!token) {
+            return;
+        }
+        try {
+            const response = await fetch(`/api/addExpense?date=${startDate}&`, {
+                headers: {
+                    "authorization": token,
+                    "Content-Type": "application/json"
+                },
+                method: "GET",
+            });
+            if (!response.ok) {
+                console.error("Error fetching data:", response.status, response.statusText);
+                return;
+            }
+            const result = await response.json();
+            const parsedResult = JSON.parse(result.result);
+
+            const amount = SimplifyFetchedResult(parsedResult);
+            const essentialsSpent = amount?.Essentials || 0;
+            const nonessentialsSpent = amount?.["Non Essentials"] || 0;
+            setEssentialsSpent(essentialsSpent);
+            setNonessentialsSpent(nonessentialsSpent);
+            setSpent(essentialsSpent + nonessentialsSpent);
+        } catch (error) {
+            console.error('Error fetching or processing data:', error);
+        }
+    }, [startDate, token]);
 
     const deleteData = useCallback(async (id) => {
         if (!token) {
@@ -174,10 +242,11 @@ export default function Home() {
             const result = await response.json();
             console.log("Success:", result);
             getList();
+            getAmount()
         } catch (error) {
             console.error("Error deleting data:", error);
         }
-    }, [getList, token]);
+    }, [getList, getAmount, token]);
 
     const getData = useCallback(async () => {
         if (!token) {
@@ -213,36 +282,6 @@ export default function Home() {
         }
     }, [token]);
 
-    const getAmount = useCallback(async () => {
-        if (!token) {
-            return;
-        }
-        try {
-            const response = await fetch(`/api/addExpense?date=${startDate}&`, {
-                headers: {
-                    "authorization": token,
-                    "Content-Type": "application/json"
-                },
-                method: "GET",
-            });
-            if (!response.ok) {
-                console.error("Error fetching data:", response.status, response.statusText);
-                return;
-            }
-            const result = await response.json();
-            const parsedResult = JSON.parse(result.result);
-
-            const amount = SimplifyFetchedResult(parsedResult);
-            const essentialsSpent = amount?.Essentials || 0;
-            const nonessentialsSpent = amount?.["Non Essentials"] || 0;
-            setEssentialsSpent(essentialsSpent);
-            setNonessentialsSpent(nonessentialsSpent);
-            setSpent(essentialsSpent + nonessentialsSpent);
-        } catch (error) {
-            console.error('Error fetching or processing data:', error);
-        }
-    }, [startDate, token]);
-
     const budgetRatio = useCallback(() => {
         let num = parseInt(salary.includes(",") ? salary.replaceAll(',', '') : salary);
         num = parseInt(num);
@@ -264,19 +303,28 @@ export default function Home() {
 
     useEffect(() => {
         if (!authUser) {
+            if (authUser === false) {
+                window.location.href = '/';
+            }
             return;
         }
         authUser.getIdToken().then((val) => {
             setToken(val);
         });
-        getData();
         getList();
-        getAmount();
-    }, [authUser, getData, getList, getAmount])
+    }, [authUser, getList])
 
     useEffect(() => {
         firstDayOfMonth(new Date());
     }, [])
+
+    useEffect(() => {
+        getData();
+    }, [getData])
+
+    useEffect(() => {
+        getAmount();
+    }, [getAmount])
 
 
     if (!filteredList) {
@@ -381,126 +429,14 @@ export default function Home() {
                                 <span className="text-white font-normal text-xs">clear date</span>
                             </button>
                         </div>
-                    </div>
-                </div>
-            </main>
-
-        )
-    }
-
-    if (!filteredList.length) {
-        return (
-            <main className="flex justify-center">
-                <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
-
-                    <div className="topPortion">
-                        <div className=" flex flex-row items-end bg-black border-b border-slate-500 sticky py-2 top-0 z-50">
-                            <div className="relative inline-block text-black">
-                                <button
-                                    onClick={() => { setDropdownOpen(!isDropdownOpen) }}
-                                    className=" text-4xl text-white  rounded  focus:outline-none">
-                                    ☰
-                                </button>
-                                {isDropdownOpen && (
-                                    <div className="absolute cursor-pointer text-white left-1  right-0 mt-2 rounded-md">
-                                        <ul className="">
-                                            <Link href="/addExpense">
-                                                <li className="bg-gray-100 w-28 text-black py-1 px-1 rounded-md">Add Expense</li>
-                                            </Link>
-                                            <Link href="/">
-                                                <li onClick={logOut} className="bg-gray-100 w-20 text-black py-1 px-1 rounded-md">Logout</li>
-                                            </Link>
-                                        </ul>
-                                    </div>
-                                )}
-                            </div>
-                            <DatePicker className="w-20 z-11 cursor-pointer caret-transparent focus:outline-none h-min text-4xl bg-black"
-                                selected={startDate}
-                                onChange={(date) => firstDayOfMonth(date)}
-                                dateFormat=" MMM "
-                                showMonthYearPicker
-                            />
-                            <div className="text-sm pl-2 text-gray-400">{daysRemainingInMonth()}</div>
-                        </div>
-
-
-                        <div className="flex mt-6 justify-center">
-                            <div className="w-40 h-40 bg-white z-5 rounded-full whiteRound">
-                                <div className="text-black w-40 flex justify-center font-semibold totalAmount">
-                                    ₹{numToString(parseInteger(salary))}
-                                </div>
-                            </div>
-
-                            <div className="piechart"
-                                style={{ backgroundImage: `conic-gradient(pink ${degA}deg, blueviolet 0 ${degB}deg, orange 0 ${degC}deg)` }}>
-                            </div>
-                        </div>
-
-
-                        <div className="flex justify-around w-full">
-                            <div className="flex flex-col align-center text-sm text-center mb-2 text-gray-400"> <span>₹{numToString(spent)}</span>  <span>Spent</span>  </div>
-                            <div className="flex flex-col align-center text-sm text-center mb-2 text-cyan-400"><span>₹{numToString(parseInteger(salary) - spent)} </span>  <span>Left</span></div>
-                        </div>
-
-                        <div className="flex justify-between w-full pt-10">
-                            <div className="flex align-center text-md text-center mb-1"> Essentials</div>
-                            <div className="flex align-center  text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(essentialsShare) - essentialsSpent)} left </div>
-                        </div>
-
-                        <div className=" bg-white rounded-md">
-                            <div className={`bg-green-500 h-4 rounded-md`} style={{ width: `${((essentialsSpent / (parseInteger(essentialsShare))) * 100)}%` }}></div>
-                        </div>
-                        <div>₹{numToString(essentialsSpent)} of ₹{numToString(parseInteger(essentialsShare))}</div>
-
-                        <div className="flex justify-between w-full pt-6">
-                            <div className="flex align-center text-md text-center mb-1">Non-Essentials</div>
-                            <div className="flex align-center text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(nonessentialsShare) - nonessentialsSpent)}  left </div>
-                        </div>
-
-
-                        <div className=" bg-white rounded-md">
-                            <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${((nonessentialsSpent / (parseInteger(nonessentialsShare))) * 100)}%` }}></div>
-                        </div>
-                        <div>₹{numToString(nonessentialsSpent)} of ₹{numToString(parseInteger(nonessentialsShare))}</div>
-
-                        <div className="mt-8 m-auto w-40 border-b border-b-gray-400"></div>
-
-                    </div>
-
-
-                    <div className="footer">
-                        <div className="flex  justify-between w-full pt-6">
-                            <div className=" text-lg mb-2">Transactions </div>
-
-                            <div className="flex" onChange={(e) => { setFilter([e.target.value]) }} >
-                                <select className="text-white bg-transparent border-2 cursor-pointer border-gray-500 text-base font-medium grow rounded-md h-8 w-12">
-                                    <option className="flex text-white bg-black" value='All' >All</option>
-                                    <option className="text-white bg-black" value="Non Essentials" > NE -Non Essentials </option>
-                                    <option className="text-white bg-black" value="Essentials" > Es -Essentials</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 w-full mb-4">
-                            {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
-                            {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}> {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
-
-                            <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
-                                <span className="text-white font-normal text-xs">clear date</span>
+                        <div className=" sticky -mt-6  flex justify-end right-0 bottom-4">
+                            <button onClick={() => { window.location.href = `/addExpense/` }} className="bg-blue-500  text-4xl hover:bg-blue-600  text-white pb-2 px-3 rounded-full ">
+                                +
                             </button>
                         </div>
-
-                        <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
-
-
-                        <div className=" w-full h-72 text-red-500 ">
-                            No Transactions done....
-                        </div>
-
                     </div>
                 </div>
             </main>
-
         )
     }
 
@@ -544,26 +480,26 @@ export default function Home() {
         }
     }
 
-
+    //console.log("render")
     return (
         <main className="flex justify-center ">
             <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
 
-                <nav className=" flex flex-row items-end bg-black border-b border-slate-500 sticky top-0  py-2  z-50">
+                <nav className=" flex flex-row items-end bg-black border-b border-slate-500 sticky top-0  py-2  z-[53]">
                     <div className="relative inline-block text-black">
                         <button
                             onClick={() => { setDropdownOpen(!isDropdownOpen) }}
-                            className=" text-4xl text-white  rounded  focus:outline-none">
+                            className=" text-4xl text-white -ml-1 focus:outline-none">
                             ☰
                         </button>
                         {isDropdownOpen && (
-                            <div className="absolute cursor-pointer text-white left-1  right-0 mt-2  rounded-md">
+                            <div className="absolute cursor-pointer text-white left-1  -ml-1 mt-2  ">
                                 <ul className="">
                                     <Link href="/addExpense">
-                                        <li className="bg-gray-100 w-28 text-black py-1 px-1 rounded-md">Add Expense</li>
+                                        <li className="bg-gray-100 w-28 text-black py-1 px-1 border-2 border-b-zinc-500 rounded-tr-md">Add Expense</li>
                                     </Link>
                                     <Link href="/">
-                                        <li onClick={logOut} className="bg-gray-100 w-20 text-black py-1 px-1 rounded-md">Logout</li>
+                                        <li onClick={logOut} className="bg-gray-100 w-28 text-black py-1 px-1 rounded-b-md">Logout</li>
                                     </Link>
                                 </ul>
                             </div>
@@ -580,17 +516,16 @@ export default function Home() {
 
                 <div className="topPortion ">
                     <div className="flex mt-6 justify-center">
-                        <div className="w-40 h-40 bg-white z-5 rounded-full whiteRound">
+                        <div className="w-40 h-40 bg-white rounded-full whiteRound">
                             <div className="text-black w-40 flex justify-center font-semibold totalAmount">
                                 ₹{numToString(parseInteger(salary))}
                             </div>
                         </div>
 
-                        <div className="piechart"
+                        <div className="piechart "
                             style={{ backgroundImage: `conic-gradient(pink ${degA}deg, blueviolet 0 ${degB}deg, orange 0 ${degC}deg)` }}>
                         </div>
                     </div>
-
 
                     <div className="flex justify-around w-full">
                         <div className="flex flex-col align-center text-sm text-center mb-2 text-gray-400"> <span>₹{numToString(spent)}</span>  <span>Spent</span>  </div>
@@ -635,77 +570,106 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-2 w-full mb-4 sticky pb-2 top-24  bg-black">
-                        <div className="flex items-center gap-2">
-                            {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
-                            {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }} > {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
+                    <div className="flex flex-col gap-2 w-72 mb-4  sticky pb-2 top-[100px] z-[52]  bg-black">
+                        <div className={`flex items-center gap-2 h-8`}>
+                            {!calendar && <><div className=" border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(!showCalendar) }}>Pick a date 📅 </div></>}
+                            {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(!showCalendar); }} > {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
 
-                            <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
+                            <button onClick={() => { setCalendar(null), setShowCalendar(false) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
                                 <span className="text-white font-normal text-xs">clear date</span>
                             </button>
                         </div>
 
-                        <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
+                        <Calendar
+                            value={calendar}
+                            activeStartDate={initialDisplayDate}
+                            tileDisabled={({ date }) => date < startDate || date > maxDate}
+                            minDate={minDate} maxDate={maxDate} className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }}
+                        />
+                    </div>
+
+                    <div className={` ${!effect ? '' : 'hidden'}`} >
+                        <div className={`animate-pulse ${!effect ? '' : 'hidden'}`}>
+                            <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
+                            <div className="flex justify-between items-center py-2">
+                                <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
+                                <div className="basis-3/5">
+                                    <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
+                                    <div className="rounded h-2 w-20 bg-slate-700"></div>
+                                </div>
+                                <div className="rounded h-4 w-14 bg-slate-700"></div>
+                            </div>
+                            <div className="flex justify-between items-center py-2">
+                                <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
+                                <div className="basis-3/5">
+                                    <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
+                                    <div className="rounded h-2 w-20 bg-slate-700"></div>
+                                </div>
+                                <div className="rounded h-4 w-14 bg-slate-700"></div>
+                            </div>
+                            <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
+                            <div className="flex justify-between items-center py-2">
+                                <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
+                                <div className="basis-3/5">
+                                    <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
+                                    <div className="rounded h-2 w-20 bg-slate-700"></div>
+                                </div>
+                                <div className="rounded h-4 w-14 bg-slate-700"></div>
+                            </div>
+                            <div className="flex justify-between items-center py-2">
+                                <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
+                                <div className="basis-3/5">
+                                    <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
+                                    <div className="rounded h-2 w-20 bg-slate-700"></div>
+                                </div>
+                                <div className="rounded h-4 w-14 bg-slate-700"></div>
+                            </div>
+                            <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
+                            <div className="flex justify-between items-center py-2">
+                                <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
+                                <div className="basis-3/5">
+                                    <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
+                                    <div className="rounded h-2 w-20 bg-slate-700"></div>
+                                </div>
+                                <div className="rounded h-4 w-14 bg-slate-700"></div>
+                            </div>
+                            <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
+                            <div className="flex justify-between items-center py-2">
+                                <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
+                                <div className="basis-3/5">
+                                    <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
+                                    <div className="rounded h-2 w-20 bg-slate-700"></div>
+                                </div>
+                                <div className="rounded h-4 w-14 bg-slate-700"></div>
+                            </div>
+                            <div className=" sticky -mt-12  flex justify-end right-0 bottom-4">
+
+                            </div>
+
+                        </div>
+                        <div className=" sticky -mt-4  flex justify-end right-0 bottom-4">
+                            <button onClick={() => { window.location.href = `/addExpense/` }} className="bg-blue-500  text-4xl hover:bg-blue-600  text-white pb-2 px-3 rounded-full ">
+                                +
+                            </button>
+                        </div>
                     </div>
 
 
-                    <div className={`animate-pulse ${!effect ? '' : 'hidden'}`}>
-                        <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
-                        <div className="flex justify-between items-center py-2">
-                            <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
-                            <div className="basis-3/5">
-                                <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
-                                <div className="rounded h-2 w-20 bg-slate-700"></div>
-                            </div>
-                            <div className="rounded h-4 w-14 bg-slate-700"></div>
-                        </div>
-                        <div className="flex justify-between items-center py-2">
-                            <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
-                            <div className="basis-3/5">
-                                <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
-                                <div className="rounded h-2 w-20 bg-slate-700"></div>
-                            </div>
-                            <div className="rounded h-4 w-14 bg-slate-700"></div>
-                        </div>
-                        <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
-                        <div className="flex justify-between items-center py-2">
-                            <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
-                            <div className="basis-3/5">
-                                <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
-                                <div className="rounded h-2 w-20 bg-slate-700"></div>
-                            </div>
-                            <div className="rounded h-4 w-14 bg-slate-700"></div>
-                        </div>
-                        <div className="flex justify-between items-center py-2">
-                            <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
-                            <div className="basis-3/5">
-                                <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
-                                <div className="rounded h-2 w-20 bg-slate-700"></div>
-                            </div>
-                            <div className="rounded h-4 w-14 bg-slate-700"></div>
-                        </div>
-                        <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
-                        <div className="flex justify-between items-center py-2">
-                            <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
-                            <div className="basis-3/5">
-                                <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
-                                <div className="rounded h-2 w-20 bg-slate-700"></div>
-                            </div>
-                            <div className="rounded h-4 w-14 bg-slate-700"></div>
-                        </div>
-                        <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
-                        <div className="flex justify-between items-center py-2">
-                            <div className="text-2xl bg-slate-700 rounded w-8 h-8"></div>
-                            <div className="basis-3/5">
-                                <div className="rounded mb-2 h-4 w-30 bg-slate-700" ></div>
-                                <div className="rounded h-2 w-20 bg-slate-700"></div>
-                            </div>
-                            <div className="rounded h-4 w-14 bg-slate-700"></div>
-                        </div>
-                    </div>
+                    {!filteredList.length && <div className=" w-full h-72 text-red-500 ">
+                        No Transactions done....
+                    </div>}
+
 
                     <div className={`list ${!effect ? 'hidden' : ''} `}>
-                        {Object.entries(transactionsByDate).map(([date, transactions]) => {
+
+                        <Nav
+                            transactionsByDate={transactionsByDate}
+                            isUpdated={isUpdated}
+                            isDeleted={isDeleted}
+                            getHeaderText={getHeaderText}
+                        />
+
+                        {/* {Object.entries(transactionsByDate).map(([date, transactions]) => {
                             const headerText = getHeaderText(date);
                             return (
                                 <div key={date} className="date-group ">
@@ -731,9 +695,14 @@ export default function Home() {
                                     ))}
                                 </div>
                             )
-                        })}
-                    </div >
+                        })} */}
 
+                        <div className=" sticky -mt-12  flex justify-end right-0 bottom-4">
+                            <button onClick={() => { window.location.href = `/addExpense/` }} className="bg-blue-500  text-4xl hover:bg-blue-600  text-white pb-2 px-3 rounded-full ">
+                                +
+                            </button>
+                        </div>
+                    </div >
                 </div >
             </div >
         </main >

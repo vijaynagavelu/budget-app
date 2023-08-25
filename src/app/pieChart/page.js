@@ -154,7 +154,7 @@ export default function Home() {
 
     useEffect(() => {
         if (essentialsData) {
-            window.location.href = '/addExpense';
+            window.location.href = '/dashboard';
         }
     }, [essentialsData]);
 
