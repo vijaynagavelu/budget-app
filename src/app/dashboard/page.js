@@ -529,8 +529,6 @@ export default function Home() {
         return stringedDate;
     }
 
-
-
     function getHeaderText(date) {
         const currentDate = new Date();
         const yesterday = new Date(currentDate);

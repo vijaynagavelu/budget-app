@@ -99,10 +99,14 @@ export default function Home() {
         <main className="flex justify-center">
             <div className="flex min-h-screen flex-col w-full max-w-lg px-10 pt-20 pb-4" >
 
-                <div className="flex w-full justify-between pb-14">
+                <div className="flex w-full justify-between items-center pb-14">
                     <div className="-ml-6 text-2xl ">New Expense</div>
                     <Link href="/dashboard">
-                        <div className="w-8 cursor-pointer text-center rounded-md"> <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" id="box"><path fill="white" d="M7,14H9a1,1,0,0,0,0-2H7a1,1,0,0,0,0,2Zm6,2H7a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2ZM19,2H5A3,3,0,0,0,2,5V19a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V5A3,3,0,0,0,19,2ZM14,4V7.29l-1.51-.84a1,1,0,0,0-1,0L10,7.29V4Zm6,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V5A1,1,0,0,1,5,4H8V9a1,1,0,0,0,.5.86,1,1,0,0,0,1,0L12,8.47l2.51,1.4A1,1,0,0,0,15,10a1,1,0,0,0,1-1V4h3a1,1,0,0,1,1,1Z"></path></svg></div>
+                        <div className="w-8 cursor-pointer text-center rounded-md">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24" id="pie-chart"><path fill="white" d="M16 32c5.158 0 9.734-2.452 12.66-6.242L16 16V0C7.164 0 0 7.164 0 16s7.164 16 16 16zM14 2.142V16c0 .62.288 1.206.778 1.584l10.964 8.452A13.864 13.864 0 0 1 16 30C8.28 30 2 23.72 2 16 2 8.96 7.224 3.116 14 2.142zM18.75.268v14.31l11.424 8.806A15.83 15.83 0 0 0 32 16C32 8.104 26.272 1.574 18.75.268z"></path></svg>
+
+                        </div>
                     </Link>
                 </div>
 
