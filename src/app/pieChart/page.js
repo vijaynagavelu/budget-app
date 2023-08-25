@@ -62,6 +62,7 @@ export default function Home() {
             }
             if (parsedResult && parsedResult[0].salary) {
                 setSalary(parsedResult[0].salary);
+                setFetched(true);
             } else {
                 console.log("No data");
                 setFetched(true);
