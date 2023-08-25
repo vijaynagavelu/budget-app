@@ -637,16 +637,19 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full mb-4 sticky pb-2 top-24  bg-black">
-                        {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
-                        {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }} > {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
+                    <div className="flex flex-col gap-2 w-full mb-4 sticky pb-2 top-24  bg-black">
+                        <div className="flex items-center gap-2">
+                            {!calendar && <><div className="border-2 cursor-pointer rounded-md px-1 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }}>Pick a date 📅 </div></>}
+                            {calendar && calendar.getDate() !== null && (<div className="border-2 cursor-pointer rounded-md px-2 border-gray-500 text-sm " onClick={() => { setShowCalendar(true); }} > {calendar.getDate()}, {getMonthName(calendar.getMonth())} 📅</div>)}
 
-                        <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
-                            <span className="text-white font-normal text-xs">clear date</span>
-                        </button>
+                            <button onClick={() => { setCalendar(null) }} className={`flex ${calendar ? "" : 'hidden'} items-center w-auto  rounded-md border border-gray-500  justify-center cursor-pointer`}>
+                                <span className="text-white font-normal text-xs">clear date</span>
+                            </button>
+                        </div>
+
+                        <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
                     </div>
 
-                    <Calendar className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }} value={calendar} />
 
                     <div className={`animate-pulse ${!effect ? '' : 'hidden'}`}>
                         <div className="px-2 mt-4 rounded mb-2 h-4 w-14 bg-slate-700"></div>
@@ -703,7 +706,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className={`list ${!effect ? 'hidden' : ''} h-72`}>
+                    <div className={`list ${!effect ? 'hidden' : ''} `}>
                         {Object.entries(transactionsByDate).map(([date, transactions]) => {
                             const headerText = getHeaderText(date);
                             return (
