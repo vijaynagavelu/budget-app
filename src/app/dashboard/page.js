@@ -1,14 +1,13 @@
 'use client';
 import useFirebaseAuthentication from "@/hooks/useFirebaseAuthentication";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { auth } from "../googleSignIn/config"
 import { signOut } from "firebase/auth";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { Nav } from "@/utils/Nav";
 
 
 export default function Home() {
@@ -24,7 +23,6 @@ export default function Home() {
     const [minDate, setMinDate] = useState('');
     const [maxDate, setMaxDate] = useState('');
     const [initialDisplayDate, setInitialDisplayDate] = useState('');
-
 
     const [spent, setSpent] = useState(0);
     const [essentialsSpent, setEssentialsSpent] = useState(0);
@@ -43,7 +41,6 @@ export default function Home() {
     const [isUpdated, setIsUpdated] = useState(false);
     const [effect, setEffect] = useState(true);
 
-    const isDateDisabled = () => true;
 
     //@todo
     //salary page label
@@ -58,8 +55,8 @@ export default function Home() {
     //go to login page          approval needed???
 
 
+
     //@Pending points
-    //dashboard child component
 
 
     const handleDelete = (id) => {
@@ -68,13 +65,6 @@ export default function Home() {
             setIsDeleted(false);
         }, 2000);
     };
-
-    const handleUpdate = (id) => {
-        setIsUpdated(id);
-        setTimeout(() => {
-            setIsUpdated(false);
-        }, 2000);
-    }
 
     const logOut = () => {
         signOut(auth).then(() => {
@@ -91,15 +81,6 @@ export default function Home() {
         } else {
             return "";
         }
-    }
-
-    function generateRandomColor() {
-        let maxVal = 0xFFFFFF; // 16777215
-        let randomNumber = Math.random() * maxVal;
-        randomNumber = Math.floor(randomNumber);
-        randomNumber = randomNumber.toString(16);
-        let randColor = randomNumber.padStart(6, 0);
-        return `#${randColor.toUpperCase()}`
     }
 
     function numToString(value) {
@@ -143,17 +124,15 @@ export default function Home() {
     }
 
     function firstDayOfMonth(date) {
-        console.log("datefunction");
         const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         setStartDate(firstDayOfMonth);
 
-        const currentDate = new Date(date);
-        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         setMinDate(startOfMonth);
-        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
         setMaxDate(endOfMonth);
-
-        setInitialDisplayDate(new Date(date.getFullYear(), date.getMonth(), date.getDate()));
+        const initialDisplayDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        setInitialDisplayDate(initialDisplayDate);
     }
 
     function getMonthName(monthIndex) {
@@ -327,6 +306,110 @@ export default function Home() {
     }, [getAmount])
 
 
+    const ChildComponent = React.memo(({ filteredList, deleteData }) => {
+
+        if (!filteredList.length) {
+            return (
+                <div className=" w-full h-72 text-red-500 ">
+                    No Transactions done....
+                </div>
+            )
+        }
+
+        function convertToHumanReadable(time) {
+            const timestamp = parseInt(time, 10) * 1000;
+            const date = new Date(timestamp);
+            const formattedDate = date.toLocaleDateString();
+            //console.log(date, formattedDate);
+            return formattedDate;
+        }
+
+        const transactionsByDate = filteredList.reduce((acc, transaction) => {
+            const now = convertToHumanReadable(transaction.updatedAt);
+            //console.log(now);
+            const date = now;
+            if (!acc[date]) {
+                acc[date] = [];
+            }
+            acc[date].push(transaction);
+            return acc;
+        }, {});
+
+        function formatDate(date) {
+            const options = { month: 'short', day: 'numeric' };
+            const stringedDate = new Date(date).toLocaleDateString('en-US', options);
+            return stringedDate;
+        }
+
+        function getHeaderText(date) {
+            const currentDate = new Date();
+            const yesterday = new Date(currentDate);
+            yesterday.setDate(currentDate.getDate() - 1);
+
+            const parsedDate = new Date(date);
+            if (parsedDate.toDateString() === currentDate.toDateString()) {
+                return 'Today';
+            } else if (parsedDate.toDateString() === yesterday.toDateString()) {
+                return 'Yesterday';
+            } else {
+                return formatDate(date);
+            }
+        }
+
+        function generateRandomColor() {
+            let maxVal = 0xFFFFFF; // 16777215
+            let randomNumber = Math.random() * maxVal;
+            randomNumber = Math.floor(randomNumber);
+            randomNumber = randomNumber.toString(16);
+            let randColor = randomNumber.padStart(6, 0);
+            return `#${randColor.toUpperCase()}`
+        }
+
+        const handleUpdate = (id) => {
+            setIsUpdated(id);
+        }
+
+
+        return (
+            Object.entries(transactionsByDate).map(([date, transactions]) => {
+                const headerText = getHeaderText(date);
+                return (
+                    <div key={date} className="date-group ">
+                        <div className="text-sm  mt-2 text-gray-400">{headerText} </div>
+                        {transactions.map((transaction, index) => (
+                            <div key={index} className="flex justify-between items-center py-2">
+                                <div className="text-2xl w-10 rounded mr-4 h-8" style={{ backgroundColor: generateRandomColor() }}></div>
+                                <div className="basis-4/6">
+                                    <div className="text-base" >{transaction.note}</div>
+                                    <div className="text-xs text-gray-400">{transaction.need} </div>
+                                </div>
+
+                                <div className="text-sm text-right mr-2 basis-2/6">-₹{transaction.amount}</div>
+
+                                <div onClick={() => { (window.location.href = `/editExpense/${transaction.id}`), handleUpdate(transaction.id) }} className={` mx-4 rounded-md cursor-pointer border-2 border-transparent duration-300 hover:border-green-600 ${isUpdated === transaction.id ? 'bg-green-500 ' : 'bg-transparent-300'}`}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 24 24" id="edit"><g data-name="Layer 2"><path fill="white" d="M19 20H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zM5 18h.09l4.17-.38a2 2 0 0 0 1.21-.57l9-9a1.92 1.92 0 0 0-.07-2.71L16.66 2.6A2 2 0 0 0 14 2.53l-9 9a2 2 0 0 0-.57 1.21L4 16.91a1 1 0 0 0 .29.8A1 1 0 0 0 5 18zM15.27 4 18 6.73l-2 1.95L13.32 6zm-8.9 8.91L12 7.32l2.7 2.7-5.6 5.6-3 .28z" data-name="edit-2"></path></g></svg>
+                                </div>
+
+                                <div onClick={() => deleteData(transaction.id)} className={`rounded-md cursor-pointer border-2 border-transparent duration-300 hover:border-red-600 ${isDeleted === transaction.id ? 'bg-red-500 ' : 'bg-transparent-300 '} `}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 32 32" id="delete"><path fill="white" d="M24.2,12.193,23.8,24.3a3.988,3.988,0,0,1-4,3.857H12.2a3.988,3.988,0,0,1-4-3.853L7.8,12.193a1,1,0,0,1,2-.066l.4,12.11a2,2,0,0,0,2,1.923h7.6a2,2,0,0,0,2-1.927l.4-12.106a1,1,0,0,1,2,.066Zm1.323-4.029a1,1,0,0,1-1,1H7.478a1,1,0,0,1,0-2h3.1a1.276,1.276,0,0,0,1.273-1.148,2.991,2.991,0,0,1,2.984-2.694h2.33a2.991,2.991,0,0,1,2.984,2.694,1.276,1.276,0,0,0,1.273,1.148h3.1A1,1,0,0,1,25.522,8.164Zm-11.936-1h4.828a3.3,3.3,0,0,1-.255-.944,1,1,0,0,0-.994-.9h-2.33a1,1,0,0,0-.994.9A3.3,3.3,0,0,1,13.586,7.164Zm1.007,15.151V13.8a1,1,0,0,0-2,0v8.519a1,1,0,0,0,2,0Zm4.814,0V13.8a1,1,0,0,0-2,0v8.519a1,1,0,0,0,2,0Z"></path></svg>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
+            })
+        )
+    });
+
+    const memoizedChildComponent = useMemo(() => (
+        <ChildComponent
+            filteredList={filteredList}
+            deleteData={deleteData}
+        />
+    ), [filteredList, deleteData]);
+    ChildComponent.displayName = 'ChildComponent'
+
+
     if (!filteredList) {
         return (
             <main className="flex justify-center">
@@ -408,7 +491,6 @@ export default function Home() {
 
                     </div>
 
-
                     <div className="footer h-46">
                         <div className="flex  justify-between w-full pt-6">
                             <div className=" text-lg mb-2">Transactions </div>
@@ -440,47 +522,7 @@ export default function Home() {
         )
     }
 
-    function convertToHumanReadable(time) {
-        const timestamp = parseInt(time, 10) * 1000;
-        const date = new Date(timestamp);
-        const formattedDate = date.toLocaleDateString();
-        //console.log(date, formattedDate);
-        return formattedDate;
-    }
-
-    const transactionsByDate = filteredList.reduce((acc, transaction) => {
-        const now = convertToHumanReadable(transaction.updatedAt);
-        //console.log(now);
-        const date = now;
-        if (!acc[date]) {
-            acc[date] = [];
-        }
-        acc[date].push(transaction);
-        return acc;
-    }, {});
-
-    function formatDate(date) {
-        const options = { month: 'short', day: 'numeric' };
-        const stringedDate = new Date(date).toLocaleDateString('en-US', options);
-        return stringedDate;
-    }
-
-    function getHeaderText(date) {
-        const currentDate = new Date();
-        const yesterday = new Date(currentDate);
-        yesterday.setDate(currentDate.getDate() - 1);
-
-        const parsedDate = new Date(date);
-        if (parsedDate.toDateString() === currentDate.toDateString()) {
-            return 'Today';
-        } else if (parsedDate.toDateString() === yesterday.toDateString()) {
-            return 'Yesterday';
-        } else {
-            return formatDate(date);
-        }
-    }
-
-    //console.log("render")
+    console.log("render")
     return (
         <main className="flex justify-center ">
             <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
@@ -489,7 +531,7 @@ export default function Home() {
                     <div className="relative inline-block text-black">
                         <button
                             onClick={() => { setDropdownOpen(!isDropdownOpen) }}
-                            className=" text-4xl text-white -ml-1 focus:outline-none">
+                            className=" text-4xl text-white -ml-1 focus:outline-none" >
                             ☰
                         </button>
                         {isDropdownOpen && (
@@ -582,7 +624,7 @@ export default function Home() {
 
                         <Calendar
                             value={calendar}
-                            activeStartDate={initialDisplayDate}
+                            activeStartDate={initialDisplayDate ? initialDisplayDate : null}
                             tileDisabled={({ date }) => date < startDate || date > maxDate}
                             minDate={minDate} maxDate={maxDate} className={`rounded-lg mb-4 text-black ${showCalendar ? "" : "hidden"}`} onChange={(e) => { setCalendar(e), setShowCalendar(false) }}
                         />
@@ -655,54 +697,15 @@ export default function Home() {
                     </div>
 
 
-                    {!filteredList.length && <div className=" w-full h-72 text-red-500 ">
-                        No Transactions done....
-                    </div>}
-
-
                     <div className={`list ${!effect ? 'hidden' : ''} `}>
-
-                        <Nav
-                            transactionsByDate={transactionsByDate}
-                            isUpdated={isUpdated}
-                            isDeleted={isDeleted}
-                            getHeaderText={getHeaderText}
-                        />
-
-                        {/* {Object.entries(transactionsByDate).map(([date, transactions]) => {
-                            const headerText = getHeaderText(date);
-                            return (
-                                <div key={date} className="date-group ">
-                                    <div className="text-sm  mt-2 text-gray-400">{headerText} </div>
-                                    {transactions.map((transaction, index) => (
-                                        <div key={index} className="flex justify-between items-center py-2">
-                                            <div className="text-2xl w-10 rounded mr-4 h-8" style={{ backgroundColor: generateRandomColor() }}></div>
-                                            <div className="basis-4/6">
-                                                <div className="text-base" >{transaction.note}</div>
-                                                <div className="text-xs text-gray-400">{transaction.need} </div>
-                                            </div>
-
-                                            <div className="text-sm text-right mr-2 basis-2/6">-₹{transaction.amount}</div>
-
-                                            <div onClick={() => { (window.location.href = `/editExpense/${transaction.id}`), handleUpdate(transaction.id) }} className={` mx-4 rounded-md cursor-pointer border-2 border-transparent duration-300 hover:border-green-600 ${isUpdated === transaction.id ? 'bg-green-500 ' : 'bg-transparent-300'}`}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 24 24" id="edit"><g data-name="Layer 2"><path fill="white" d="M19 20H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zM5 18h.09l4.17-.38a2 2 0 0 0 1.21-.57l9-9a1.92 1.92 0 0 0-.07-2.71L16.66 2.6A2 2 0 0 0 14 2.53l-9 9a2 2 0 0 0-.57 1.21L4 16.91a1 1 0 0 0 .29.8A1 1 0 0 0 5 18zM15.27 4 18 6.73l-2 1.95L13.32 6zm-8.9 8.91L12 7.32l2.7 2.7-5.6 5.6-3 .28z" data-name="edit-2"></path></g></svg>
-                                            </div>
-
-                                            <div onClick={() => deleteData(transaction.id)} className={`rounded-md cursor-pointer border-2 border-transparent duration-300 hover:border-red-600 ${isDeleted === transaction.id ? 'bg-red-500 ' : 'bg-transparent-300 '} `}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 32 32" id="delete"><path fill="white" d="M24.2,12.193,23.8,24.3a3.988,3.988,0,0,1-4,3.857H12.2a3.988,3.988,0,0,1-4-3.853L7.8,12.193a1,1,0,0,1,2-.066l.4,12.11a2,2,0,0,0,2,1.923h7.6a2,2,0,0,0,2-1.927l.4-12.106a1,1,0,0,1,2,.066Zm1.323-4.029a1,1,0,0,1-1,1H7.478a1,1,0,0,1,0-2h3.1a1.276,1.276,0,0,0,1.273-1.148,2.991,2.991,0,0,1,2.984-2.694h2.33a2.991,2.991,0,0,1,2.984,2.694,1.276,1.276,0,0,0,1.273,1.148h3.1A1,1,0,0,1,25.522,8.164Zm-11.936-1h4.828a3.3,3.3,0,0,1-.255-.944,1,1,0,0,0-.994-.9h-2.33a1,1,0,0,0-.994.9A3.3,3.3,0,0,1,13.586,7.164Zm1.007,15.151V13.8a1,1,0,0,0-2,0v8.519a1,1,0,0,0,2,0Zm4.814,0V13.8a1,1,0,0,0-2,0v8.519a1,1,0,0,0,2,0Z"></path></svg>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )
-                        })} */}
-
+                        {memoizedChildComponent}
                         <div className=" sticky -mt-12  flex justify-end right-0 bottom-4">
                             <button onClick={() => { window.location.href = `/addExpense/` }} className="bg-blue-500  text-4xl hover:bg-blue-600  text-white pb-2 px-3 rounded-full ">
                                 +
                             </button>
                         </div>
                     </div >
+
                 </div >
             </div >
         </main >
