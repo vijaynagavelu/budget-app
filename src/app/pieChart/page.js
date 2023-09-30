@@ -91,7 +91,7 @@ export default function Home() {
                 }
                 const result = await response.json();
                 console.log("Success:", result);
-                window.location.href = '/addExpense'
+                window.location.href = '/dashboard'
             } catch (error) {
                 console.error("Error updating data:", error);
             }
