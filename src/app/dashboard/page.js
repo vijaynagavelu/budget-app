@@ -321,6 +321,7 @@ export default function Home() {
         function formatDate(date) {
             const options = { month: 'short', day: 'numeric' };
             const stringedDate = new Date(date).toLocaleDateString('en-US', options);
+            console.log(stringedDate.toString(), stringedDate)
             return stringedDate.toString();
         }
 
