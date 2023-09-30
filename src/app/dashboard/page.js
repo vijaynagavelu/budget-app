@@ -376,7 +376,7 @@ export default function Home() {
             const monthIndex = date.getMonth();
             const dayOfMonth = date.getDate();
 
-            return `${months[monthIndex]} ${dayOfMonth}`;
+            return `${date}`;
         }
 
         function getHeaderText(date) {
