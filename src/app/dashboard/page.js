@@ -365,6 +365,20 @@ export default function Home() {
             return stringedDate.toLocaleString();
         }
 
+        function extractMonthAndDate(dateStr) {
+            const date = new Date(dateStr);
+
+            const months = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+
+            const monthIndex = date.getMonth();
+            const dayOfMonth = date.getDate();
+
+            return `${months[monthIndex]} ${dayOfMonth}`;
+        }
+
         function getHeaderText(date) {
             const currentDate = new Date();
             const yesterday = new Date(currentDate);
@@ -376,7 +390,7 @@ export default function Home() {
             } else if (parsedDate.toDateString() === yesterday.toDateString()) {
                 return 'Yesterday';
             } else {
-                return `${formatDate(date)} `;
+                return `${extractMonthAndDate(date)} `;
             }
         }
 
@@ -403,7 +417,7 @@ export default function Home() {
                         const headerText = getHeaderText(date);
                         return (
                             <div key={date} className="date-group ">
-                                <div className="text-sm  mt-2 text-gray-400">Sepx {headerText} </div>
+                                <div className="text-sm  mt-2 text-gray-400">Test 1  {headerText} </div>
                                 {transactions.map((transaction, index) => (
                                     <div key={index} className="flex justify-between items-center py-2">
                                         <div className="text-2xl w-10 rounded mr-4 h-8" style={{ backgroundColor: generateRandomColor() }}></div>
