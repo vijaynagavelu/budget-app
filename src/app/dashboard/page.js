@@ -362,8 +362,8 @@ export default function Home() {
             console.log(new Date(date), date)
             const dateStr = new Date(date);
 
-            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-            const formattedDate = dateStr.toLocaleDateString('en-US', options);
+            const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+            const formattedDate = dateStr.toLocaleDateString('en-AU', options);
             return `${formattedDate}`;
         }
 
@@ -378,7 +378,7 @@ export default function Home() {
             } else if (parsedDate.toDateString() === yesterday.toDateString()) {
                 return 'Yesterday';
             } else {
-                return `${formatDate(date)} kl`;
+                return `${formatDate(date)} `;
             }
         }
 
