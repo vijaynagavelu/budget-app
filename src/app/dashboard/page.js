@@ -362,7 +362,7 @@ export default function Home() {
             console.log(new Date(date), date)
             const dateStr = new Date(date);
 
-            const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+            const options = { day: 'numeric' };
             const formattedDate = dateStr.toLocaleDateString('en-AU', options);
             return `${formattedDate}`;
         }
