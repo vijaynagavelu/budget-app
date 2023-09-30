@@ -7,20 +7,23 @@ export default function Home() {
 
     const [name, setName] = useState('');
     const [token, setToken] = useState('');
-    const [inputSalary, setInputSalary] = useState();
+    const [inputSalary, setInputSalary] = useState(0);
     const [email, setEmail] = useState('');
     const [salary, setSalary] = useState("");
-    const [timer, setTimer] = useState(0);
     const authUser = useFirebaseAuthentication();
     const [isFetched, setFetched] = useState(false);
 
-
     function parseInteger(int) {
-        if (int) {
+        if (int && !(/[a-zA-Z]/.test(int))) {
             let num = parseInt(int.replaceAll(',', ''));
             return num.toLocaleString();
+        }
+        if (int && (/[a-zA-Z]/.test(int))) {
+            console.log("Alphabetic characters detected");
+            let num = parseInt(int.replace(/[^0-9]/g, ''));
+            return (!isNaN(num) ? num.toLocaleString() : '');
         } else {
-            return "";
+            return '';
         }
     }
 
