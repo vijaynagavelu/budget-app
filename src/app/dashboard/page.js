@@ -363,7 +363,7 @@ export default function Home() {
             console.log(date);
             const month = parseInt(parts[0], 10); // Convert the month part to an integer
             const day = parseInt(parts[1], 10);
-            return `${day} / ${month}`;
+            return `${day} / `;
         }
 
         function getHeaderText(date) {
