@@ -323,7 +323,7 @@ export default function Home() {
             const stringedDate = new Date(date).toLocaleDateString('en-US', options);
             const options1 = { day: 'numeric' };
             const stringedDate1 = new Date(date).toLocaleDateString('en-US', options1);
-            return stringedDate.toString() + ' - ' + stringedDate1.toString();
+            return stringedDate.toLocaleString() + ' - ' + stringedDate1.toString();
         }
 
         function getHeaderText(date) {
