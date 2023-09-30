@@ -362,8 +362,9 @@ export default function Home() {
             console.log(date);
             const parts = date.split('/');
             //const month = parseInt(parts[0], 10); // Convert the month part to an integer
-            const day = parseInt(parts[1], 10);   // Convert the day part to an integer
-            return `${day}`;
+            const day = parseInt(parts[1], 10);
+            console.log(day.toString())   // Convert the day part to an integer
+            return `${day.toString()}`;
         }
 
         function getHeaderText(date) {
@@ -404,7 +405,7 @@ export default function Home() {
                         const headerText = getHeaderText(date);
                         return (
                             <div key={date} className="date-group ">
-                                <div className="text-sm  mt-2 text-gray-400">Sep {headerText} </div>
+                                <div className="text-sm  mt-2 text-gray-400">Sepx {headerText} </div>
                                 {transactions.map((transaction, index) => (
                                     <div key={index} className="flex justify-between items-center py-2">
                                         <div className="text-2xl w-10 rounded mr-4 h-8" style={{ backgroundColor: generateRandomColor() }}></div>
