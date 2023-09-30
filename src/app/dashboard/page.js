@@ -318,25 +318,58 @@ export default function Home() {
             return acc;
         }, {});
 
-        // function formatDate(date) {
-        //     console.log(date);
-        //     const options = { month: 'short' ,day: 'numeric'};
-        //     const stringedDate = new Date(date).toLocaleDateString('en-US', options);
-        //     return stringedDate.toLocaleString() + ' \ ' + stringedDate1.toString();
-        // }
-
-
         function formatDate(date) {
             console.log(date);
-            const options = { month: 'numeric', day: 'numeric' };
+            const options = { month: 'short', day: 'numeric' };
             const stringedDate = new Date(date).toLocaleDateString('en-US', options);
             return stringedDate.toLocaleString();
         }
 
-        function extractMonthAndDate(dateStr) {
+        function extractMonthAndDat(dateStr) {
             const date = new Date(dateStr);
             console.log(dateStr);
             return `${dateStr}`;
+        }
+
+        function getMonthAbbreviation(month) {
+            switch (month) {
+                case 1:
+                    return "jan";
+                case 2:
+                    return "feb";
+                case 3:
+                    return "mar";
+                case 4:
+                    return "apr";
+                case 5:
+                    return "may";
+                case 6:
+                    return "jun";
+                case 7:
+                    return "jul";
+                case 8:
+                    return "aug";
+                case 9:
+                    return "sep";
+                case 10:
+                    return "oct";
+                case 11:
+                    return "nov";
+                case 12:
+                    return "dec";
+                default:
+                    return "unknown";
+            }
+        }
+
+        function extractMonthAndDate(dateString) {
+            const parts = dateString.split('/');
+            const month = parseInt(parts[0], 10); // Convert the month part to an integer
+            const day = parseInt(parts[1], 10);   // Convert the day part to an integer
+
+            const monthAbbreviation = getMonthAbbreviation(day);
+
+            return `${monthAbbreviation} ${month} `;
         }
 
         function getHeaderText(date) {
@@ -354,7 +387,7 @@ export default function Home() {
                 return `${extractMonthAndDate(date)} `;
             }
             else {
-                return `${formatDate(date)} `;
+                return `${formatDate(date)}`;
             }
         }
 
