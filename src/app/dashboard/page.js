@@ -359,12 +359,11 @@ export default function Home() {
         }
 
         function formatDate(date) {
-            console.log(date);
             const parts = date.split('/');
-            //const month = parseInt(parts[0], 10); // Convert the month part to an integer
+            console.log(date);
+            const month = parseInt(parts[0], 10); // Convert the month part to an integer
             const day = parseInt(parts[1], 10);
-            console.log(day.toString())   // Convert the day part to an integer
-            return `${day.toString()}`;
+            return `${day} / ${month}`;
         }
 
         function getHeaderText(date) {
