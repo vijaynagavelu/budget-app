@@ -321,23 +321,8 @@ export default function Home() {
         function formatDate(date) {
             const options = { month: 'short', day: 'numeric' };
             const stringedDate = new Date(date).toLocaleDateString('en-US', options);
-            return stringedDate;
+            return stringedDate.toString();
         }
-
-        // function getHeaderText(date) {
-        //     const currentDate = new Date();
-        //     const yesterday = new Date(currentDate);
-        //     yesterday.setDate(currentDate.getDate() - 1);
-
-        //     const parsedDate = new Date(date);
-        //     if (parsedDate.toDateString() === currentDate.toDateString()) {
-        //         return 'Today';
-        //     } else if (parsedDate.toDateString() === yesterday.toDateString()) {
-        //         return 'Yesterday';
-        //     } else {
-        //         return formatDate(date);
-        //     }
-        // }
 
         function getHeaderText(date) {
             const currentDate = new Date();
@@ -345,15 +330,16 @@ export default function Home() {
             yesterday.setDate(currentDate.getDate() - 1);
 
             const parsedDate = new Date(date);
-
             if (parsedDate.toDateString() === currentDate.toDateString()) {
-                return <text>Today</text>;
+                return 'Today';
             } else if (parsedDate.toDateString() === yesterday.toDateString()) {
-                return <text>Yesterday</text>;
+                return 'Yesterday';
             } else {
-                return <text>{formatDate(date)}</text>;
+                console.log(formatDate(date))
+                return formatDate(date);
             }
         }
+
 
 
         function generateRandomColor() {
