@@ -405,7 +405,7 @@ export default function Home() {
                         const headerText = getHeaderText(date);
                         return (
                             <div key={date} className="date-group ">
-                                <div className="text-sm  mt-2 text-gray-400">{headerText} </div>
+                                <div className="text-sm  mt-2 text-gray-400">Sep {headerText} </div>
                                 {transactions.map((transaction, index) => (
                                     <div key={index} className="flex justify-between items-center py-2">
                                         <div className="text-2xl w-10 rounded mr-4 h-8" style={{ backgroundColor: generateRandomColor() }}></div>
