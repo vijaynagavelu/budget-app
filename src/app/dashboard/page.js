@@ -318,13 +318,54 @@ export default function Home() {
             return acc;
         }, {});
 
+        // function formatDate(date) {
+        //     console.log(date);
+        //     const options = { month: 'short' };
+        //     const stringedDate = new Date(date).toLocaleDateString('en-US', options);
+        //     const options1 = { day: 'numeric' };
+        //     const stringedDate1 = new Date(date).toLocaleDateString('en-US', options1);
+        //     return stringedDate.toLocaleString() + ' \ ' + stringedDate1.toString();
+        // }
+
+        function getMonthAbbreviation(month) {
+            switch (month) {
+                case 1:
+                    return "jan";
+                case 2:
+                    return "feb";
+                case 3:
+                    return "mar";
+                case 4:
+                    return "apr";
+                case 5:
+                    return "may";
+                case 6:
+                    return "jun";
+                case 7:
+                    return "jul";
+                case 8:
+                    return "aug";
+                case 9:
+                    return "sep";
+                case 10:
+                    return "oct";
+                case 11:
+                    return "nov";
+                case 12:
+                    return "dec";
+                default:
+                    return "unknown";
+            }
+        }
+
         function formatDate(date) {
             console.log(date);
-            const options = { month: 'short' };
-            const stringedDate = new Date(date).toLocaleDateString('en-US', options);
-            const options1 = { day: 'numeric' };
-            const stringedDate1 = new Date(date).toLocaleDateString('en-US', options1);
-            return stringedDate.toLocaleString() + ' \ ' + stringedDate1.toString();
+            const parts = date.split('/');
+            const month = parseInt(parts[0], 10); // Convert the month part to an integer
+            const day = parseInt(parts[1], 10);   // Convert the day part to an integer
+            const monthAbbreviation = getMonthAbbreviation(month);
+            console.log("Month day:", monthAbbreviation, day);
+            return `${monthAbbreviation} ${day}`;
         }
 
         function getHeaderText(date) {
@@ -338,7 +379,7 @@ export default function Home() {
             } else if (parsedDate.toDateString() === yesterday.toDateString()) {
                 return 'Yesterday';
             } else {
-                return `hai ${formatDate(date)} ${currentDate}`;
+                return `${formatDate(date)}`;
             }
         }
 
