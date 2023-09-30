@@ -391,8 +391,6 @@ export default function Home() {
             }
         }
 
-
-
         function generateRandomColor() {
             let maxVal = 0xFFFFFF; // 16777215
             let randomNumber = Math.random() * maxVal;
