@@ -319,11 +319,12 @@ export default function Home() {
         }, {});
 
         function formatDate(date) {
+            console.log(date);
             const options = { month: 'short' };
             const stringedDate = new Date(date).toLocaleDateString('en-US', options);
             const options1 = { day: 'numeric' };
             const stringedDate1 = new Date(date).toLocaleDateString('en-US', options1);
-            return stringedDate.toLocaleString() + ' - ' + stringedDate1.toString();
+            return stringedDate.toLocaleString() + ' \ ' + stringedDate1.toString();
         }
 
         function getHeaderText(date) {
@@ -337,8 +338,7 @@ export default function Home() {
             } else if (parsedDate.toDateString() === yesterday.toDateString()) {
                 return 'Yesterday';
             } else {
-                console.log(typeof (formatDate(date)))
-                return formatDate(date);
+                return `hai ${formatDate(date)} ${currentDate}`;
             }
         }
 
