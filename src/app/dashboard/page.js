@@ -319,9 +319,11 @@ export default function Home() {
         }, {});
 
         function formatDate(date) {
-            const options = { month: 'short', day: 'numeric' };
+            const options = { month: 'short' };
             const stringedDate = new Date(date).toLocaleDateString('en-US', options);
-            return 'lk ' + stringedDate.toString();
+            const options1 = { day: 'numeric' };
+            const stringedDate1 = new Date(date).toLocaleDateString('en-US', options1);
+            return stringedDate.toString() + ' - ' + stringedDate1.toString();
         }
 
         function getHeaderText(date) {
