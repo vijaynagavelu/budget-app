@@ -330,7 +330,7 @@ export default function Home() {
         function getMonthAbbreviation(month) {
             switch (month) {
                 case 1:
-                    return "jan";
+                    return "Jan";
                 case 2:
                     return "Feb";
                 case 3:
@@ -365,7 +365,7 @@ export default function Home() {
             const day = parseInt(parts[1], 10);   // Convert the day part to an integer
             const monthAbbreviation = getMonthAbbreviation(month);
             console.log("Month day:", monthAbbreviation, day);
-            return `${monthAbbreviation}z / ${day}`;
+            return `${monthAbbreviation}`;
         }
 
         function getHeaderText(date) {
