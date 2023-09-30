@@ -365,7 +365,7 @@ export default function Home() {
             const day = parseInt(parts[1], 10);   // Convert the day part to an integer
             const monthAbbreviation = getMonthAbbreviation(month);
             console.log("Month day:", monthAbbreviation, day);
-            return `${month} ${day}`;
+            return `${monthAbbreviation}z / ${day}`;
         }
 
         function getHeaderText(date) {
