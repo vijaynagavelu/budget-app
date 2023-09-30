@@ -359,13 +359,12 @@ export default function Home() {
         }
 
         function formatDate(date) {
-            console.log(date);
-            const parts = date.split('/');
-            const month = parseInt(parts[0], 10); // Convert the month part to an integer
-            const day = parseInt(parts[1], 10);   // Convert the day part to an integer
-            const monthAbbreviation = getMonthAbbreviation(month);
-            console.log("Month day:", monthAbbreviation, day);
-            return `${date}`;
+            console.log(new Date(date), date)
+            const dateStr = new Date(date);
+
+            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            const formattedDate = dateStr.toLocaleDateString('en-US', options);
+            return `${formattedDate}`;
         }
 
         function getHeaderText(date) {
