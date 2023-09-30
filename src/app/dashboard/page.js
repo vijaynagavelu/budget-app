@@ -320,43 +320,11 @@ export default function Home() {
 
         // function formatDate(date) {
         //     console.log(date);
-        //     const options = { month: 'short' };
+        //     const options = { month: 'short' ,day: 'numeric'};
         //     const stringedDate = new Date(date).toLocaleDateString('en-US', options);
-        //     const options1 = { day: 'numeric' };
-        //     const stringedDate1 = new Date(date).toLocaleDateString('en-US', options1);
         //     return stringedDate.toLocaleString() + ' \ ' + stringedDate1.toString();
         // }
 
-        function getMonthAbbreviation(month) {
-            switch (month) {
-                case 1:
-                    return "Jan";
-                case 2:
-                    return "Feb";
-                case 3:
-                    return "Mar";
-                case 4:
-                    return "Apr";
-                case 5:
-                    return "May";
-                case 6:
-                    return "Jun";
-                case 7:
-                    return "Jul";
-                case 8:
-                    return "Aug";
-                case 9:
-                    return "Sep";
-                case 10:
-                    return "Oct";
-                case 11:
-                    return "Nov";
-                case 12:
-                    return "Dec";
-                default:
-                    return "Unknown";
-            }
-        }
 
         function formatDate(date) {
             console.log(date);
@@ -367,15 +335,7 @@ export default function Home() {
 
         function extractMonthAndDate(dateStr) {
             const date = new Date(dateStr);
-
-            const months = [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-            ];
-
-            const monthIndex = date.getMonth();
-            const dayOfMonth = date.getDate();
-
+            console.log(dateStr);
             return `${dateStr}`;
         }
 
@@ -383,14 +343,18 @@ export default function Home() {
             const currentDate = new Date();
             const yesterday = new Date(currentDate);
             yesterday.setDate(currentDate.getDate() - 1);
+            const userAgent = navigator.userAgent.toLowerCase();
 
             const parsedDate = new Date(date);
             if (parsedDate.toDateString() === currentDate.toDateString()) {
                 return 'Today';
             } else if (parsedDate.toDateString() === yesterday.toDateString()) {
                 return 'Yesterday';
-            } else {
+            } else if (userAgent.includes('android') || userAgent.includes('iphone') || userAgent.includes('ipad')) {
                 return `${extractMonthAndDate(date)} `;
+            }
+            else {
+                return `${formatDate(date)} `;
             }
         }
 
@@ -417,7 +381,7 @@ export default function Home() {
                         const headerText = getHeaderText(date);
                         return (
                             <div key={date} className="date-group ">
-                                <div className="text-sm  mt-2 text-gray-400">Test 1  {headerText} </div>
+                                <div className="text-sm  mt-2 text-gray-400"> {headerText} </div>
                                 {transactions.map((transaction, index) => (
                                     <div key={index} className="flex justify-between items-center py-2">
                                         <div className="text-2xl w-10 rounded mr-4 h-8" style={{ backgroundColor: generateRandomColor() }}></div>
