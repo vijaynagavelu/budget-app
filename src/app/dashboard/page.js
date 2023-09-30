@@ -359,11 +359,10 @@ export default function Home() {
         }
 
         function formatDate(date) {
-            const parts = date.split('/');
             console.log(date);
-            const month = parseInt(parts[0], 10); // Convert the month part to an integer
-            const day = parseInt(parts[1], 10);
-            return `${day} / `;
+            const options = { month: 'numeric', day: 'numeric' };
+            const stringedDate = new Date(date).toLocaleDateString('en-US', options);
+            return stringedDate.toLocaleString();
         }
 
         function getHeaderText(date) {
