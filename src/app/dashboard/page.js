@@ -334,29 +334,29 @@ export default function Home() {
         function getMonthAbbreviation(month) {
             switch (month) {
                 case 1:
-                    return "jan";
+                    return "Jan";
                 case 2:
-                    return "feb";
+                    return "Feb";
                 case 3:
-                    return "mar";
+                    return "Mar";
                 case 4:
-                    return "apr";
+                    return "Apr";
                 case 5:
-                    return "may";
+                    return "May";
                 case 6:
-                    return "jun";
+                    return "Jun";
                 case 7:
-                    return "jul";
+                    return "Jul";
                 case 8:
-                    return "aug";
+                    return "Aug";
                 case 9:
-                    return "sep";
+                    return "Sep";
                 case 10:
-                    return "oct";
+                    return "Oct";
                 case 11:
-                    return "nov";
+                    return "Nov";
                 case 12:
-                    return "dec";
+                    return "Dec";
                 default:
                     return "unknown";
             }
