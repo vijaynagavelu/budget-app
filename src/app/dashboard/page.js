@@ -324,20 +324,37 @@ export default function Home() {
             return stringedDate;
         }
 
+        // function getHeaderText(date) {
+        //     const currentDate = new Date();
+        //     const yesterday = new Date(currentDate);
+        //     yesterday.setDate(currentDate.getDate() - 1);
+
+        //     const parsedDate = new Date(date);
+        //     if (parsedDate.toDateString() === currentDate.toDateString()) {
+        //         return 'Today';
+        //     } else if (parsedDate.toDateString() === yesterday.toDateString()) {
+        //         return 'Yesterday';
+        //     } else {
+        //         return formatDate(date);
+        //     }
+        // }
+
         function getHeaderText(date) {
             const currentDate = new Date();
             const yesterday = new Date(currentDate);
             yesterday.setDate(currentDate.getDate() - 1);
 
             const parsedDate = new Date(date);
+
             if (parsedDate.toDateString() === currentDate.toDateString()) {
-                return 'Today';
+                return <text>Today</text>;
             } else if (parsedDate.toDateString() === yesterday.toDateString()) {
-                return 'Yesterday';
+                return <text>Yesterday</text>;
             } else {
-                return formatDate(date);
+                return <text>{formatDate(date)}</text>;
             }
         }
+
 
         function generateRandomColor() {
             let maxVal = 0xFFFFFF; // 16777215
@@ -570,12 +587,9 @@ export default function Home() {
                     </div>
 
                     <div className=" bg-white rounded-md">
-                        {/* <div className={`bg-green-500 h-4 rounded-md`} style={{ width: `${((essentialsSpent / (parseInteger(essentialsShare))) * 100)}%` }}></div> */}
                         <div className="bg-green-500 h-4  rounded-md" style={{ width: `${(((essentialsSpent / (parseInteger(essentialsShare))) * 100) > 100 ? 100 : (essentialsSpent / (parseInteger(essentialsShare)) * 100))}%` }}></div>
                     </div>
                     <div>₹{numToString(essentialsSpent)} of ₹{numToString(parseInteger(essentialsShare))}</div>
-
-
 
 
                     <div className="flex justify-between w-full pt-6">
@@ -584,12 +598,9 @@ export default function Home() {
                     </div>
 
                     <div className=" bg-white rounded-md">
-                        {/* <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${((nonessentialsSpent / (parseInteger(nonessentialsShare))) * 100)}%` }}></div> */}
                         <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${(((nonessentialsSpent / (parseInteger(nonessentialsShare)) * 100) > 100) ? 100 : (nonessentialsSpent / (parseInteger(nonessentialsShare)) * 100))}%` }}></div>
                     </div>
                     <div>₹{numToString(nonessentialsSpent)} of ₹{numToString(parseInteger(nonessentialsShare))}</div>
-
-
 
 
                     <div className="mt-8 m-auto w-40 border-b border-b-gray-400"></div>
