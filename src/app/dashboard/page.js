@@ -460,7 +460,7 @@ export default function Home() {
                         </div>
 
                         <div className=" bg-white rounded-md">
-                            <div className={`bg-green-500 h-4 rounded-md`} style={{ width: `${((essentialsSpent / (parseInteger(essentialsShare))) * 100)}%` }}></div>
+                            <div className="bg-green-500 h-4  rounded-md" style={{ width: `${(((essentialsSpent / (parseInteger(essentialsShare))) * 100) > 100 ? 100 : (essentialsSpent / (parseInteger(essentialsShare)) * 100))}%` }}></div>
                         </div>
                         <div>₹{numToString(essentialsSpent)} of ₹{numToString(parseInteger(essentialsShare))}</div>
 
@@ -471,7 +471,7 @@ export default function Home() {
 
 
                         <div className=" bg-white rounded-md">
-                            <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${((nonessentialsSpent / (parseInteger(nonessentialsShare))) * 100)}%` }}></div>
+                            <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${(((nonessentialsSpent / (parseInteger(nonessentialsShare)) * 100) > 100) ? 100 : (nonessentialsSpent / (parseInteger(nonessentialsShare)) * 100))}%` }}></div>
                         </div>
                         <div>₹{numToString(nonessentialsSpent)} of ₹{numToString(parseInteger(nonessentialsShare))}</div>
 
@@ -510,7 +510,7 @@ export default function Home() {
         )
     }
 
-    console.log("render")
+    //console.log("render")
     return (
         <main className="flex justify-center ">
             <div className="flex min-h-screen  flex-col w-full max-w-lg justify-center px-12 pt-4 pb-4" >
@@ -562,30 +562,40 @@ export default function Home() {
                         <div className="flex flex-col align-center text-sm text-center mb-2 text-cyan-400"><span>₹{numToString(parseInteger(salary) - spent)} </span>  <span>Left</span></div>
                     </div>
 
+
+
                     <div className="flex justify-between w-full pt-10">
                         <div className="flex align-center text-md text-center mb-1"> Essentials</div>
-                        <div className="flex align-center  text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(essentialsShare) - essentialsSpent)} left </div>
+                        <div className="flex align-center  text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(essentialsShare) - essentialsSpent)} {(parseInteger(essentialsShare) < essentialsSpent ? 'exceeded' : 'left')} </div>
                     </div>
 
                     <div className=" bg-white rounded-md">
-                        <div className={`bg-green-500 h-4 rounded-md`} style={{ width: `${((essentialsSpent / (parseInteger(essentialsShare))) * 100)}%` }}></div>
+                        {/* <div className={`bg-green-500 h-4 rounded-md`} style={{ width: `${((essentialsSpent / (parseInteger(essentialsShare))) * 100)}%` }}></div> */}
+                        <div className="bg-green-500 h-4  rounded-md" style={{ width: `${(((essentialsSpent / (parseInteger(essentialsShare))) * 100) > 100 ? 100 : (essentialsSpent / (parseInteger(essentialsShare)) * 100))}%` }}></div>
                     </div>
                     <div>₹{numToString(essentialsSpent)} of ₹{numToString(parseInteger(essentialsShare))}</div>
 
+
+
+
                     <div className="flex justify-between w-full pt-6">
                         <div className="flex align-center text-md text-center mb-1">Non-Essentials</div>
-                        <div className="flex align-center text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(nonessentialsShare) - nonessentialsSpent)}  left </div>
+                        <div className="flex align-center text-sm text-center mb-1 text-gray-400">₹{numToString(parseInteger(nonessentialsShare) - nonessentialsSpent)}   {(parseInteger(nonessentialsShare) < nonessentialsSpent ? 'exceeded' : 'left')} </div>
                     </div>
-
 
                     <div className=" bg-white rounded-md">
-                        <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${((nonessentialsSpent / (parseInteger(nonessentialsShare))) * 100)}%` }}></div>
+                        {/* <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${((nonessentialsSpent / (parseInteger(nonessentialsShare))) * 100)}%` }}></div> */}
+                        <div className="bg-yellow-500 h-4  rounded-md" style={{ width: `${(((nonessentialsSpent / (parseInteger(nonessentialsShare)) * 100) > 100) ? 100 : (nonessentialsSpent / (parseInteger(nonessentialsShare)) * 100))}%` }}></div>
                     </div>
                     <div>₹{numToString(nonessentialsSpent)} of ₹{numToString(parseInteger(nonessentialsShare))}</div>
+
+
+
 
                     <div className="mt-8 m-auto w-40 border-b border-b-gray-400"></div>
 
                 </div>
+
 
                 <div className="footer">
                     <div className="flex  justify-between w-full pt-6 sticky top-10 bg-black">
